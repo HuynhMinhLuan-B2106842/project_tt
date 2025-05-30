@@ -13,7 +13,7 @@ connectDB();
 swaggerSetup(app);
 
 app.use('/api/taikhoan', require('./routes/taikhoan.route'));
-// app.use('/api/benhnhan', require('./routes/benhnhan.routes'));
+app.use('/api/benhnhan', require('./routes/benhnhan.route'));
 // app.use('/api/yeucau', require('./routes/yeucau.routes'));
 
 module.exports = app;
