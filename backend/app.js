@@ -14,6 +14,8 @@ swaggerSetup(app);
 
 app.use('/api/taikhoan', require('./routes/taikhoan.route'));
 app.use('/api/benhnhan', require('./routes/benhnhan.route'));
-// app.use('/api/yeucau', require('./routes/yeucau.routes'));
+app.use('/api/mauquytrinh', require('./routes/mauquytrinh.route'));
+app.use('/api/buocthucthi', require('./routes/buocthucthi.route'));
+app.use('/api/thucthi', require('./routes/thucthi.route'));
 
 module.exports = app;
