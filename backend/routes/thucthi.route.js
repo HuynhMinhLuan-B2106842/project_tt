@@ -1,26 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const {
-  taoMau,
+  taoThucThi,
   layTatCa,
   layChiTiet,
   capNhat,
   xoa
-} = require("../controllers/mauquytrinh.controller");
+} = require("../controllers/thucthi.controller");
 
 /**
  * @swagger
  * tags:
- *   name: Mauquytrinh
- *   description: API cho mẫu quy trình khám bệnh
+ *   name: Thucthiquytrinh
+ *   description: API xử lý các quy trình khám bệnh đang thực hiện
  */
 
 /**
  * @swagger
- * /api/mauquytrinh:
+ * /api/thucthiquytrinh:
  *   post:
- *     summary: Tạo mẫu quy trình mới
- *     tags: [Mauquytrinh]
+ *     summary: Tạo mới bản thực hiện quy trình từ mẫu
+ *     tags: [Thucthiquytrinh]
  *     requestBody:
  *       required: true
  *       content:
@@ -28,57 +28,59 @@ const {
  *           schema:
  *             type: object
  *             properties:
- *               ten_MQT:
+ *               ma_MQT:
  *                 type: string
- *               mo_ta_MQT:
+ *               ma_LKB:
  *                 type: string
- *               bpmn_xml:
+ *               ma_TK:
+ *                 type: string
+ *               tao_boi_TTQT:
  *                 type: string
  *     responses:
  *       201:
- *         description: Tạo mẫu thành công
+ *         description: Tạo thành công
  */
-router.post("/", taoMau);
+router.post("/", taoThucThi);
 
 /**
  * @swagger
- * /api/mauquytrinh:
+ * /api/thucthiquytrinh:
  *   get:
- *     summary: Lấy tất cả mẫu quy trình
- *     tags: [Mauquytrinh]
+ *     summary: Lấy tất cả quy trình đang thực hiện
+ *     tags: [Thucthiquytrinh]
  *     responses:
  *       200:
- *         description: Danh sách mẫu quy trình
+ *         description: Danh sách quy trình
  */
 router.get("/", layTatCa);
 
 /**
  * @swagger
- * /api/mauquytrinh/{id}:
+ * /api/thucthiquytrinh/{id}:
  *   get:
- *     summary: Lấy chi tiết mẫu quy trình
- *     tags: [Mauquytrinh]
+ *     summary: Lấy chi tiết quy trình thực hiện theo ID
+ *     tags: [Thucthiquytrinh]
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Trả về chi tiết mẫu
+ *         description: Trả về chi tiết quy trình
  */
 router.get("/:id", layChiTiet);
 
 /**
  * @swagger
- * /api/mauquytrinh/{id}:
+ * /api/thucthiquytrinh/{id}:
  *   put:
- *     summary: Cập nhật mẫu quy trình
- *     tags: [Mauquytrinh]
+ *     summary: Cập nhật thông tin quy trình thực hiện
+ *     tags: [Thucthiquytrinh]
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
  *         schema:
  *           type: string
@@ -89,11 +91,13 @@ router.get("/:id", layChiTiet);
  *           schema:
  *             type: object
  *             properties:
- *               ten_MQT:
+ *               ma_MQT:
  *                 type: string
- *               mo_ta_MQT:
+ *               ma_LKB:
  *                 type: string
- *               bpmn_xml:
+ *               ma_TK:
+ *                 type: string
+ *               tao_boi_TTQT:
  *                 type: string
  *     responses:
  *       200:
@@ -103,19 +107,19 @@ router.put("/:id", capNhat);
 
 /**
  * @swagger
- * /api/mauquytrinh/{id}:
+ * /api/thucthiquytrinh/{id}:
  *   delete:
- *     summary: Xoá mẫu quy trình
- *     tags: [Mauquytrinh]
+ *     summary: Xoá bản ghi thực hiện quy trình
+ *     tags: [Thucthiquytrinh]
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Xoá thành công
+ *         description: Đã xoá
  */
 router.delete("/:id", xoa);
 
