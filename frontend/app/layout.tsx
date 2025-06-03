@@ -2,25 +2,26 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { Toaster } from "@/app/components/ui/toaster"
+import { ThemeProvider } from "./components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "BPMN Modeler",
-  description: "Công cụ tạo sơ đồ quy trình BPMN",
+  title: "Phòng Khám Đa Khoa",
+  description: "Hệ thống quản lý quy trình khám bệnh tại phòng khám đa khoa",
 }
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <body className={inter.className}>
-        {children}
-        <Toaster />
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )
