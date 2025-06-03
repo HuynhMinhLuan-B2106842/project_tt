@@ -35,7 +35,9 @@ export default function Home() {
             <Button variant="outline" className="hidden md:flex">
               Đăng nhập
             </Button>
-            <Button>Đặt lịch khám</Button>
+            <Button asChild>
+              <Link href="/benhnhan/yeucau">Đặt lịch khám</Link>
+            </Button>
           </div>
         </div>
       </header>
