@@ -182,31 +182,47 @@ export default function BpmnModeler() {
   }
 
   const saveXML = async () => {
-    if (!modelerRef.current) return
+  if (!modelerRef.current) return;
 
-    try {
-      const { xml } = await modelerRef.current.saveXML({ format: true })
-      const blob = new Blob([xml], { type: "application/xml" })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = "diagram.bpmn"
-      a.click()
-      URL.revokeObjectURL(url)
+  try {
+    const { xml } = await modelerRef.current.saveXML({ format: true });
 
-      toast({
-        title: "Đã lưu thành công",
-        description: "Sơ đồ BPMN đã được tải xuống",
-      })
-    } catch (err) {
-      console.error("Error saving XML:", err)
-      toast({
-        title: "Lỗi khi lưu",
-        description: "Không thể lưu sơ đồ BPMN",
-        variant: "destructive",
-      })
-    }
+    // 1. Gửi lên server
+    const response = await fetch("/api/diagrams", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "Sơ đồ mới",
+        description: "Lưu sơ đồ từ client",
+        bpmnXml: xml
+      }),
+    });
+
+    if (!response.ok) throw new Error("Lưu thất bại");
+
+    toast({
+      title: "🗂 Đã lưu lên server",
+      description: "Sơ đồ BPMN đã được lưu vào cơ sở dữ liệu",
+    });
+
+    // 2. (Tuỳ chọn) vẫn cho phép tải xuống file
+    const blob = new Blob([xml], { type: "application/xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "diagram.bpmn";
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Error saving XML:", err);
+    toast({
+      title: "❌ Lỗi khi lưu",
+      description: "Không thể lưu sơ đồ BPMN",
+      variant: "destructive",
+    });
   }
+};
+
 
   const saveSVG = async () => {
     if (!modelerRef.current) return
