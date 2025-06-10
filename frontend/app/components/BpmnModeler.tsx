@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useEffect, useRef, useState } from "react"
 import { Button } from "./ui/button"
 import { Card } from "./ui/card"
@@ -10,7 +8,7 @@ import { Label } from "./ui/label"
 import { Checkbox } from "./ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { Textarea } from "./ui/textarea"
-import { Download, Upload, Save, FileText, Zap, RotateCcw, Settings, X } from "lucide-react"
+import { Download, Upload, Save, FileText, Zap, RotateCcw, Settings, X, Trash2 } from "lucide-react"
 import { toast } from "../hooks/use-toast"
 
 // Import bpmn-js
@@ -34,12 +32,12 @@ interface ElementProperties {
 }
 
 export default function BpmnModeler() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const modelerRef = useRef<any>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef(null)
+  const modelerRef = useRef(null)
+  const fileInputRef = useRef(null)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [selectedElement, setSelectedElement] = useState<any>(null)
-  const [elementProperties, setElementProperties] = useState<ElementProperties>({
+  const [selectedElement, setSelectedElement] = useState(null)
+  const [elementProperties, setElementProperties] = useState({
     id: "",
     name: "",
     documentation: "",
@@ -51,9 +49,12 @@ export default function BpmnModeler() {
     exclusive: true,
   })
   const [showProperties, setShowProperties] = useState(false)
+  const [diagrams, setDiagrams] = useState([])
+  const [diagramName, setDiagramName] = useState("diagram.bpmn")
+  const [currentDiagramId, setCurrentDiagramId] = useState(null)
 
   // Default BPMN XML
-  const defaultXML = <?xml version="1.0" encoding="UTF-8"?>
+  const defaultXML = `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
   <bpmn:process id="Process_1" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" />
@@ -65,13 +66,27 @@ export default function BpmnModeler() {
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-</bpmn:definitions>
+</bpmn:definitions>`
 
   useEffect(() => {
-    // Load bpmn-js from CDN
+    // Load danh sách diagrams từ server
+    const fetchDiagrams = async () => {
+      try {
+        const response = await fetch('http://localhost:9000/api/diagrams')
+        if (!response.ok) {
+          throw new Error('Lỗi khi lấy danh sách diagram')
+        }
+        const data = await response.json()
+        setDiagrams(data)
+      } catch (err) {
+        console.error('Error fetching diagrams:', err)
+      }
+    }
+    fetchDiagrams()
+
+    // Load bpmn-js từ CDN
     const loadBpmnJS = async () => {
       if (typeof window !== "undefined" && !window.BpmnJS) {
-        // Load CSS
         const link = document.createElement("link")
         link.rel = "stylesheet"
         link.href = "https://unpkg.com/bpmn-js@17.0.2/dist/assets/diagram-js.css"
@@ -87,7 +102,6 @@ export default function BpmnModeler() {
         link3.href = "https://unpkg.com/bpmn-js@17.0.2/dist/assets/bpmn-font/css/bpmn-embedded.css"
         document.head.appendChild(link3)
 
-        // Load JS
         const script = document.createElement("script")
         script.src = "https://unpkg.com/bpmn-js@17.0.2/dist/bpmn-modeler.development.js"
         script.onload = () => {
@@ -108,9 +122,8 @@ export default function BpmnModeler() {
           },
         })
 
-        // Add selection listener
         const eventBus = modelerRef.current.get("eventBus")
-        eventBus.on("selection.changed", (event: any) => {
+        eventBus.on("selection.changed", (event) => {
           const { newSelection } = event
           if (newSelection && newSelection.length > 0) {
             const element = newSelection[0]
@@ -123,7 +136,6 @@ export default function BpmnModeler() {
           }
         })
 
-        // Import default diagram
         modelerRef.current
           .importXML(defaultXML)
           .then(() => {
@@ -133,7 +145,7 @@ export default function BpmnModeler() {
               description: "Bạn có thể bắt đầu tạo sơ đồ quy trình",
             })
           })
-          .catch((err: any) => {
+          .catch((err) => {
             console.error("Error importing XML:", err)
           })
       }
@@ -148,7 +160,7 @@ export default function BpmnModeler() {
     }
   }, [])
 
-  const loadElementProperties = (element: any) => {
+  const loadElementProperties = (element) => {
     const businessObject = element.businessObject
 
     setElementProperties({
@@ -164,13 +176,13 @@ export default function BpmnModeler() {
     })
   }
 
-  const updateElementProperty = (property: string, value: any) => {
+  const updateElementProperty = (property, value) => {
     if (!selectedElement || !modelerRef.current) return
 
     const modeling = modelerRef.current.get("modeling")
     const businessObject = selectedElement.businessObject
 
-    const updates: any = {}
+    const updates = {}
     updates[property] = value
 
     modeling.updateProperties(selectedElement, updates)
@@ -186,24 +198,96 @@ export default function BpmnModeler() {
 
     try {
       const { xml } = await modelerRef.current.saveXML({ format: true })
-      const blob = new Blob([xml], { type: "application/xml" })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = "diagram.bpmn"
-      a.click()
-      URL.revokeObjectURL(url)
-
+      const response = await fetch('http://localhost:9000/api/diagrams', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: diagramName || 'diagram.bpmn',
+          xml,
+        }),
+      })
+      if (!response.ok) {
+        throw new Error('Lỗi khi lưu diagram')
+      }
+      const data = await response.json()
+      setDiagrams((prev) => [...prev, data.diagram])
+      setCurrentDiagramId(data.diagram._id)
       toast({
-        title: "Đã lưu thành công",
-        description: "Sơ đồ BPMN đã được tải xuống",
+        title: 'Đã lưu thành công',
+        description: 'Sơ đồ BPMN đã được lưu vào cơ sở dữ liệu',
       })
     } catch (err) {
-      console.error("Error saving XML:", err)
+      console.error('Error saving XML:', err)
       toast({
-        title: "Lỗi khi lưu",
-        description: "Không thể lưu sơ đồ BPMN",
-        variant: "destructive",
+        title: 'Lỗi khi lưu',
+        description: 'Không thể lưu sơ đồ BPMN',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  const updateDiagram = async () => {
+    if (!modelerRef.current || !currentDiagramId) return
+
+    try {
+      const { xml } = await modelerRef.current.saveXML({ format: true })
+      const response = await fetch(`http://localhost:9000/api/diagrams/${currentDiagramId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: diagramName || 'diagram.bpmn',
+          xml,
+        }),
+      })
+      if (!response.ok) {
+        throw new Error('Lỗi khi cập nhật diagram')
+      }
+      const data = await response.json()
+      setDiagrams((prev) =>
+        prev.map((d) => (d._id === currentDiagramId ? data.diagram : d))
+      )
+      toast({
+        title: 'Đã cập nhật thành công',
+        description: 'Sơ đồ BPMN đã được cập nhật',
+      })
+    } catch (err) {
+      console.error('Error updating diagram:', err)
+      toast({
+        title: 'Lỗi khi cập nhật',
+        description: 'Không thể cập nhật sơ đồ BPMN',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  const deleteDiagram = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:9000/api/diagrams/${id}`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) {
+        throw new Error('Lỗi khi xóa diagram')
+      }
+      setDiagrams((prev) => prev.filter((d) => d._id !== id))
+      if (currentDiagramId === id) {
+        setCurrentDiagramId(null)
+        setDiagramName('diagram.bpmn')
+        modelerRef.current.importXML(defaultXML)
+      }
+      toast({
+        title: 'Đã xóa thành công',
+        description: 'Sơ đồ BPMN đã được xóa',
+      })
+    } catch (err) {
+      console.error('Error deleting diagram:', err)
+      toast({
+        title: 'Lỗi khi xóa',
+        description: 'Không thể xóa sơ đồ BPMN',
+        variant: 'destructive',
       })
     }
   }
@@ -222,44 +306,83 @@ export default function BpmnModeler() {
       URL.revokeObjectURL(url)
 
       toast({
-        title: "Đã xuất SVG thành công",
-        description: "Sơ đồ đã được xuất dưới dạng SVG",
+        title: 'Đã xuất SVG thành công',
+        description: 'Sơ đồ đã được xuất dưới dạng SVG',
       })
     } catch (err) {
-      console.error("Error saving SVG:", err)
+      console.error('Error saving SVG:', err)
       toast({
-        title: "Lỗi khi xuất SVG",
-        description: "Không thể xuất sơ đồ dưới dạng SVG",
-        variant: "destructive",
+        title: 'Lỗi khi xuất SVG',
+        description: 'Không thể xuất sơ đồ dưới dạng SVG',
+        variant: 'destructive',
       })
     }
   }
 
-  const loadXML = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const loadXML = async (event) => {
     const file = event.target.files?.[0]
     if (!file || !modelerRef.current) return
 
     const reader = new FileReader()
-    reader.onload = (e) => {
-      const xml = e.target?.result as string
-      modelerRef.current
-        .importXML(xml)
-        .then(() => {
-          toast({
-            title: "Đã tải thành công",
-            description: "Sơ đồ BPMN đã được tải lên",
-          })
+    reader.onload = async (e) => {
+      const xml = e.target?.result
+      try {
+        await modelerRef.current.importXML(xml)
+        const response = await fetch('http://localhost:9000/api/diagrams', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: file.name,
+            xml,
+          }),
         })
-        .catch((err: any) => {
-          console.error("Error importing XML:", err)
-          toast({
-            title: "Lỗi khi tải",
-            description: "Không thể tải sơ đồ BPMN",
-            variant: "destructive",
-          })
+        if (!response.ok) {
+          throw new Error('Lỗi khi tải và lưu diagram')
+        }
+        const data = await response.json()
+        setDiagrams((prev) => [...prev, data.diagram])
+        setCurrentDiagramId(data.diagram._id)
+        setDiagramName(file.name)
+        toast({
+          title: 'Đã tải thành công',
+          description: 'Sơ đồ BPMN đã được tải lên và lưu',
         })
+      } catch (err) {
+        console.error('Error importing XML:', err)
+        toast({
+          title: 'Lỗi khi tải',
+          description: 'Không thể tải sơ đồ BPMN',
+          variant: 'destructive',
+        })
+      }
     }
     reader.readAsText(file)
+  }
+
+  const loadDiagramFromServer = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:9000/api/diagrams/${id}`)
+      if (!response.ok) {
+        throw new Error('Lỗi khi tải diagram')
+      }
+      const data = await response.json()
+      await modelerRef.current.importXML(data.xml)
+      setCurrentDiagramId(id)
+      setDiagramName(data.name)
+      toast({
+        title: 'Đã tải thành công',
+        description: 'Sơ đồ BPMN đã được tải từ server',
+      })
+    } catch (err) {
+      console.error('Error loading diagram:', err)
+      toast({
+        title: 'Lỗi khi tải',
+        description: 'Không thể tải sơ đồ BPMN',
+        variant: 'destructive',
+      })
+    }
   }
 
   const createNewDiagram = () => {
@@ -270,13 +393,15 @@ export default function BpmnModeler() {
       .then(() => {
         setShowProperties(false)
         setSelectedElement(null)
+        setCurrentDiagramId(null)
+        setDiagramName('diagram.bpmn')
         toast({
-          title: "Đã tạo sơ đồ mới",
-          description: "Sơ đồ trống đã được tạo",
+          title: 'Đã tạo sơ đồ mới',
+          description: 'Sơ đồ trống đã được tạo',
         })
       })
-      .catch((err: any) => {
-        console.error("Error creating new diagram:", err)
+      .catch((err) => {
+        console.error('Error creating new diagram:', err)
       })
   }
 
@@ -287,7 +412,7 @@ export default function BpmnModeler() {
     canvas.zoom("fit-viewport")
   }
 
-  const getElementTypeLabel = (element: any) => {
+  const getElementTypeLabel = (element) => {
     if (!element) return ""
 
     const type = element.type
@@ -319,6 +444,52 @@ export default function BpmnModeler() {
 
   return (
     <div className="h-full flex bg-gray-50">
+      {/* Danh sách sơ đồ */}
+      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+        <div className="p-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Danh sách sơ đồ</h2>
+        </div>
+        <div className="p-4">
+          <Input
+            value={diagramName}
+            onChange={(e) => setDiagramName(e.target.value)}
+            placeholder="Nhập tên sơ đồ"
+            className="mb-4"
+          />
+        </div>
+        <div className="flex-1 overflow-y-auto p-4">
+          {diagrams.length > 0 ? (
+            <ul className="space-y-2">
+              {diagrams.map((diagram) => (
+                <li
+                  key={diagram._id}
+                  className="p-2 hover:bg-gray-100 rounded flex justify-between items-center"
+                >
+                  <div
+                    className="cursor-pointer flex-1"
+                    onClick={() => loadDiagramFromServer(diagram._id)}
+                  >
+                    {diagram.name} <br />
+                    <small className="text-gray-500">
+                      Cập nhật: {new Date(diagram.updatedAt).toLocaleString()}
+                    </small>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => deleteDiagram(diagram._id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">Chưa có sơ đồ nào</p>
+          )}
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
@@ -345,15 +516,25 @@ export default function BpmnModeler() {
                 Lưu BPMN
               </Button>
 
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={updateDiagram}
+                disabled={!isLoaded || !currentDiagramId}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Cập nhật
+              </Button>
+
               <Button variant="outline" size="sm" onClick={saveSVG} disabled={!isLoaded}>
                 <Download className="h-4 w-4 mr-2" />
                 Xuất SVG
               </Button>
 
-              {/* <Button variant="outline" size="sm" onClick={zoomToFit} disabled={!isLoaded}>
+              <Button variant="outline" size="sm" onClick={zoomToFit} disabled={!isLoaded}>
                 <Zap className="h-4 w-4 mr-2" />
                 Zoom vừa
-              </Button> */}
+              </Button>
 
               <Button
                 variant="outline"
@@ -434,19 +615,7 @@ export default function BpmnModeler() {
                     rows={3}
                   />
                 </div>
-                {(selectedElement.type === "bpmn:SequenceFlow") && (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="element-assignee">Biểu thức điều kiện</Label>
-                      <Input
-                        id="element-assignee"
-                        value={elementProperties.assignee}
-                        onChange={(e) => updateElementProperty("assignee", e.target.value)}
-                        placeholder=""
-                      />
-                    </div>
-                  </>
-                )}                
+
                 {(selectedElement.type === "bpmn:UserTask" || selectedElement.type === "bpmn:Task") && (
                   <>
                     <div className="space-y-2">
@@ -469,7 +638,7 @@ export default function BpmnModeler() {
                       />
                     </div>
 
-                    {/* <div className="space-y-2">
+                    <div className="space-y-2">
                       <Label htmlFor="element-priority">Độ ưu tiên</Label>
                       <Select
                         value={elementProperties.priority}
@@ -504,7 +673,7 @@ export default function BpmnModeler() {
                         onCheckedChange={(checked) => updateElementProperty("async", checked)}
                       />
                       <Label htmlFor="element-async">Thực hiện bất đồng bộ</Label>
-                    </div> */}
+                    </div>
                   </>
                 )}
 
