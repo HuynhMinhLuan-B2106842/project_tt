@@ -182,12 +182,19 @@ export default function BpmnModeler() {
     if (!selectedElement || !modelerRef.current) return
 
     const modeling = modelerRef.current.get("modeling")
+    const moddle = modelerRef.current.get("moddle")
     const businessObject = selectedElement.businessObject
 
-    const updates = {}
-    updates[property] = value
-
-    modeling.updateProperties(selectedElement, updates)
+    if (property === "documentation") {
+      const documentation = value
+        ? [moddle.create("bpmn:Documentation", { text: value })]
+        : []
+      modeling.updateProperties(selectedElement, { documentation })
+    } else {
+      const updates = {}
+      updates[property] = value
+      modeling.updateProperties(selectedElement, updates)
+    }
 
     setElementProperties((prev) => ({
       ...prev,
@@ -208,6 +215,7 @@ export default function BpmnModeler() {
 
     try {
       const { xml } = await modelerRef.current.saveXML({ format: true })
+      console.log("XML:", xml) // Kiểm tra XML để xác nhận documentation
       const response = await fetch('http://localhost:9000/api/diagrams', {
         method: 'POST',
         headers: {
@@ -251,6 +259,7 @@ export default function BpmnModeler() {
 
     try {
       const { xml } = await modelerRef.current.saveXML({ format: true })
+      console.log("XML:", xml) // Kiểm tra XML để xác nhận documentation
       const response = await fetch(`http://localhost:9000/api/diagrams/${currentDiagramId}`, {
         method: 'PUT',
         headers: {
@@ -653,7 +662,7 @@ export default function BpmnModeler() {
                   />
                 </div>
 
-                {(selectedElement.type === "bpmn:UserTask" || selectedElement.type === "bpmn:Task") && (
+                {/* {(selectedElement.type === "bpmn:UserTask" || selectedElement.type === "bpmn:Task") && (
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="element-assignee">Người thực hiện</Label>
@@ -712,7 +721,7 @@ export default function BpmnModeler() {
                       <Label htmlFor="element-async">Thực hiện bất đồng bộ</Label>
                     </div>
                   </>
-                )}
+                )} */}
 
                 {selectedElement.type?.includes("Gateway") && (
                   <div className="flex items-center space-x-2">
@@ -736,43 +745,43 @@ export default function BpmnModeler() {
       )}
 
       {/* Modal để nhập tên sơ đồ mới */}
-{showNewDiagramModal && (
-  <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-    <Card className="w-96 p-6 bg-white shadow-lg">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Tạo sơ đồ mới</h2>
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="new-diagram-name" className="text-gray-700">Tên sơ đồ</Label>
-          <Input
-            id="new-diagram-name"
-            value={tempDiagramName}
-            onChange={(e) => setTempDiagramName(e.target.value)}
-            placeholder="Nhập tên sơ đồ"
-            className="border-gray-300 text-gray-900"
-          />
+      {showNewDiagramModal && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-96 p-6 bg-white shadow-lg">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tạo sơ đồ mới</h2>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="new-diagram-name" className="text-gray-700">Tên sơ đồ</Label>
+                <Input
+                  id="new-diagram-name"
+                  value={tempDiagramName}
+                  onChange={(e) => setTempDiagramName(e.target.value)}
+                  placeholder="Nhập tên sơ đồ"
+                  className="border-gray-300 text-gray-900"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowNewDiagramModal(false)
+                    setTempDiagramName("")
+                  }}
+                  className="text-gray-700 border-gray-300"
+                >
+                  Hủy
+                </Button>
+                <Button
+                  onClick={handleCreateNewDiagram}
+                  className="bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  Tạo
+                </Button>
+              </div>
+            </div>
+          </Card>
         </div>
-        <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={() => {
-              setShowNewDiagramModal(false)
-              setTempDiagramName("")
-            }}
-            className="text-gray-700 border-gray-300"
-          >
-            Hủy
-          </Button>
-          <Button
-            onClick={handleCreateNewDiagram}
-            className="bg-blue-600 text-white hover:bg-blue-700"
-          >
-            Tạo
-          </Button>
-        </div>
-      </div>
-    </Card>
-  </div>
-)}
+      )}
     </div>
   )
 }
