@@ -4,13 +4,13 @@ import { useState } from 'react';
 import './sidebar.css'; // global CSS
 
 const Sidebar = () => {
-  const [openMenus, setOpenMenus] = useState<string[]>([]); // đổi từ string -> mảng
+  const [openMenus, setOpenMenus] = useState<string[]>([]); 
 
   const toggleMenu = (menu: string) => {
     setOpenMenus(prev =>
       prev.includes(menu)
-        ? prev.filter(m => m !== menu) // nếu đang mở => đóng lại
-        : [...prev, menu]              // nếu đang đóng => mở ra
+        ? prev.filter(m => m !== menu) 
+        : [...prev, menu]            
     );
   };
 
@@ -25,6 +25,7 @@ const Sidebar = () => {
           </button>
           {openMenus.includes('hoso') && (
             <ul className="subMenu">
+              <li><Link href="/admin?section=benhnhan" className="subMenuItem">Danh sách bệnh nhân</Link></li>
               <li><Link href="/admin/yeucau" className="subMenuItem">Yêu cầu khám</Link></li>
               <li><Link href="/admin/lankham" className="subMenuItem">Lần khám</Link></li>
               <li><Link href="/admin/thucthi" className="subMenuItem">Thực thi bước</Link></li>
@@ -50,7 +51,6 @@ const Sidebar = () => {
           </button>
           {openMenus.includes('hethong') && (
             <ul className="subMenu">
-              <li><Link href="/admin/benhnhan" className="subMenuItem">Quản lý bệnh nhân</Link></li>
               <li><Link href="/admin/taikhoan" className="subMenuItem">Tài khoản người dùng</Link></li>
               <li><Link href="/admin/thongke" className="subMenuItem">Thống kê & Báo cáo</Link></li>
             </ul>

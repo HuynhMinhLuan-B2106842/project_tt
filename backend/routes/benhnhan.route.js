@@ -6,6 +6,7 @@ const {
     layChiTietBenhNhan,
     capNhatHoSoBenhNhan,
     xoaBenhNhan,
+    Timkiembenhnhan,
 } = require("../controllers/benhnhan.controller");
 
 /**
@@ -63,6 +64,55 @@ router.post("/", taoHoSoBenhNhan);
  *         description: Trả về danh sách hồ sơ bệnh nhân
  */
 router.get("/", layDanhSachBenhNhan);
+
+/**
+ * @swagger
+ * /api/benhnhan/timkiem/{ho_ten}:
+ *   get:
+ *     summary: Tìm kiếm bệnh nhân theo họ tên (gần đúng, không phân biệt hoa thường)
+ *     tags: [BenhNhan]
+ *     parameters:
+ *       - name: ho_ten
+ *         in: path
+ *         required: true
+ *         description: Họ tên bệnh nhân cần tìm (có thể là một phần tên)
+ *         schema:
+ *           type: string
+ *           example: nguyen
+ *     responses:
+ *       200:
+ *         description: Danh sách bệnh nhân tìm được
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   ho_ten:
+ *                     type: string
+ *                   ngay_sinh:
+ *                     type: string
+ *                     format: date
+ *                   gioi_tinh:
+ *                     type: string
+ *                   dien_thoai:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   dia_chi:
+ *                     type: string
+ *                   ngay_tao_ho_so:
+ *                     type: string
+ *                     format: date-time
+ *       404:
+ *         description: Không tìm thấy bệnh nhân nào
+ *       500:
+ *         description: Lỗi máy chủ
+ */
+router.get('/timkiem/:ho_ten', Timkiembenhnhan)
 
 /**
  * @swagger

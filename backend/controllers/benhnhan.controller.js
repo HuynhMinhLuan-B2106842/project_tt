@@ -31,6 +31,24 @@ const layDanhSachBenhNhan = async (req, res) => {
     }
 };
 
+const Timkiembenhnhan = async (req, res) => {
+  try {
+    const { ho_ten } = req.params;
+
+    const benhnhans = await Benhnhan.find({
+      ho_ten: { $regex: ho_ten, $options: 'i' } 
+    });
+
+    if (benhnhans.length === 0) {
+      return res.status(200).json({ message: "Không tìm thấy hồ sơ bệnh nhân" });
+    }
+
+    res.status(200).json(benhnhans);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi máy chủ", error: error.message });
+  }
+};
+
 // Lấy chi tiết hồ sơ bệnh nhân theo ID
 const layChiTietBenhNhan = async (req, res) => {
     try {
@@ -98,5 +116,6 @@ module.exports = {
     layChiTietBenhNhan,
     capNhatHoSoBenhNhan,
     xoaBenhNhan,
+    Timkiembenhnhan,
 };
 
