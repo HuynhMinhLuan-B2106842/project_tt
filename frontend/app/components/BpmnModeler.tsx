@@ -50,8 +50,10 @@ export default function BpmnModeler() {
   })
   const [showProperties, setShowProperties] = useState(false)
   const [diagrams, setDiagrams] = useState([])
-  const [diagramName, setDiagramName] = useState("diagram.bpmn")
+  const [diagramName, setDiagramName] = useState("")
   const [currentDiagramId, setCurrentDiagramId] = useState(null)
+  const [showNewDiagramModal, setShowNewDiagramModal] = useState(false)
+  const [tempDiagramName, setTempDiagramName] = useState("")
 
   // Default BPMN XML
   const defaultXML = `<?xml version="1.0" encoding="UTF-8"?>
@@ -180,12 +182,19 @@ export default function BpmnModeler() {
     if (!selectedElement || !modelerRef.current) return
 
     const modeling = modelerRef.current.get("modeling")
+    const moddle = modelerRef.current.get("moddle")
     const businessObject = selectedElement.businessObject
 
-    const updates = {}
-    updates[property] = value
-
-    modeling.updateProperties(selectedElement, updates)
+    if (property === "documentation") {
+      const documentation = value
+        ? [moddle.create("bpmn:Documentation", { text: value })]
+        : []
+      modeling.updateProperties(selectedElement, { documentation })
+    } else {
+      const updates = {}
+      updates[property] = value
+      modeling.updateProperties(selectedElement, updates)
+    }
 
     setElementProperties((prev) => ({
       ...prev,
@@ -195,16 +204,25 @@ export default function BpmnModeler() {
 
   const saveXML = async () => {
     if (!modelerRef.current) return
+    if (!diagramName) {
+      toast({
+        title: 'Lỗi',
+        description: 'Vui lòng nhập tên sơ đồ trước khi lưu',
+        variant: 'destructive',
+      })
+      return
+    }
 
     try {
       const { xml } = await modelerRef.current.saveXML({ format: true })
+      console.log("XML:", xml) // Kiểm tra XML để xác nhận documentation
       const response = await fetch('http://localhost:9000/api/diagrams', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: diagramName || 'diagram.bpmn',
+          name: diagramName,
           xml,
         }),
       })
@@ -230,16 +248,25 @@ export default function BpmnModeler() {
 
   const updateDiagram = async () => {
     if (!modelerRef.current || !currentDiagramId) return
+    if (!diagramName) {
+      toast({
+        title: 'Lỗi',
+        description: 'Vui lòng nhập tên sơ đồ trước khi cập nhật',
+        variant: 'destructive',
+      })
+      return
+    }
 
     try {
       const { xml } = await modelerRef.current.saveXML({ format: true })
+      console.log("XML:", xml) // Kiểm tra XML để xác nhận documentation
       const response = await fetch(`http://localhost:9000/api/diagrams/${currentDiagramId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: diagramName || 'diagram.bpmn',
+          name: diagramName,
           xml,
         }),
       })
@@ -275,7 +302,7 @@ export default function BpmnModeler() {
       setDiagrams((prev) => prev.filter((d) => d._id !== id))
       if (currentDiagramId === id) {
         setCurrentDiagramId(null)
-        setDiagramName('diagram.bpmn')
+        setDiagramName('')
         modelerRef.current.importXML(defaultXML)
       }
       toast({
@@ -301,7 +328,7 @@ export default function BpmnModeler() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
-      a.download = "diagram.svg"
+      a.download = diagramName ? `${diagramName.split('.bpmn')[0]}.svg` : "diagram.svg"
       a.click()
       URL.revokeObjectURL(url)
 
@@ -385,8 +412,15 @@ export default function BpmnModeler() {
     }
   }
 
-  const createNewDiagram = () => {
-    if (!modelerRef.current) return
+  const handleCreateNewDiagram = () => {
+    if (!modelerRef.current || !tempDiagramName) {
+      toast({
+        title: 'Lỗi',
+        description: 'Vui lòng nhập tên sơ đồ',
+        variant: 'destructive',
+      })
+      return
+    }
 
     modelerRef.current
       .importXML(defaultXML)
@@ -394,7 +428,9 @@ export default function BpmnModeler() {
         setShowProperties(false)
         setSelectedElement(null)
         setCurrentDiagramId(null)
-        setDiagramName('diagram.bpmn')
+        setDiagramName(tempDiagramName)
+        setShowNewDiagramModal(false)
+        setTempDiagramName("")
         toast({
           title: 'Đã tạo sơ đồ mới',
           description: 'Sơ đồ trống đã được tạo',
@@ -402,6 +438,11 @@ export default function BpmnModeler() {
       })
       .catch((err) => {
         console.error('Error creating new diagram:', err)
+        toast({
+          title: 'Lỗi khi tạo',
+          description: 'Không thể tạo sơ đồ mới',
+          variant: 'destructive',
+        })
       })
   }
 
@@ -447,7 +488,7 @@ export default function BpmnModeler() {
       {/* Danh sách sơ đồ */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Danh sách sơ đồ</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Danh sách quy trình</h2>
         </div>
         <div className="p-4">
           <Input
@@ -497,11 +538,16 @@ export default function BpmnModeler() {
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-2">
               <FileText className="h-6 w-6 text-blue-600" />
-              <h1 className="text-xl font-semibold text-gray-900">BPMN Modeler</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Quy trình khám bệnh</h1>
             </div>
 
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={createNewDiagram} disabled={!isLoaded}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowNewDiagramModal(true)}
+                disabled={!isLoaded}
+              >
                 <FileText className="h-4 w-4 mr-2" />
                 Mới
               </Button>
@@ -616,7 +662,7 @@ export default function BpmnModeler() {
                   />
                 </div>
 
-                {(selectedElement.type === "bpmn:UserTask" || selectedElement.type === "bpmn:Task") && (
+                {/* {(selectedElement.type === "bpmn:UserTask" || selectedElement.type === "bpmn:Task") && (
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="element-assignee">Người thực hiện</Label>
@@ -675,7 +721,7 @@ export default function BpmnModeler() {
                       <Label htmlFor="element-async">Thực hiện bất đồng bộ</Label>
                     </div>
                   </>
-                )}
+                )} */}
 
                 {selectedElement.type?.includes("Gateway") && (
                   <div className="flex items-center space-x-2">
@@ -695,6 +741,45 @@ export default function BpmnModeler() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Modal để nhập tên sơ đồ mới */}
+      {showNewDiagramModal && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-96 p-6 bg-white shadow-lg">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tạo sơ đồ mới</h2>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="new-diagram-name" className="text-gray-700">Tên sơ đồ</Label>
+                <Input
+                  id="new-diagram-name"
+                  value={tempDiagramName}
+                  onChange={(e) => setTempDiagramName(e.target.value)}
+                  placeholder="Nhập tên sơ đồ"
+                  className="border-gray-300 text-gray-900"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowNewDiagramModal(false)
+                    setTempDiagramName("")
+                  }}
+                  className="text-gray-700 border-gray-300"
+                >
+                  Hủy
+                </Button>
+                <Button
+                  onClick={handleCreateNewDiagram}
+                  className="bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  Tạo
+                </Button>
+              </div>
+            </div>
+          </Card>
         </div>
       )}
     </div>
