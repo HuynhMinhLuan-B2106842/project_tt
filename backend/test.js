@@ -5,7 +5,7 @@ const {
   TaiKhoan,
   BenhNhan,
   YeuCauKham
-} = require('./database/models');
+} = require('./models');
 
 const runTest = async () => {
   await connectDB();
