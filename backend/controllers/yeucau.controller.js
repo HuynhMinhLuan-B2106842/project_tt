@@ -66,10 +66,30 @@ const huyYeuCau = async (req, res) => {
     }
 };
 
+const timKiemYeuCau = async (req, res) => {
+    try {
+        const ten = req.params.ten;
+
+        // Tìm các yêu cầu khám có tên bệnh nhân khớp (dùng populate)
+        const danhSach = await Yeucau.find().populate({
+            path: 'ma_BN',
+            match: { ho_ten: { $regex: ten, $options: 'i' } }, // tìm tên gần đúng, không phân biệt hoa thường
+        });
+
+        // Chỉ giữ lại những yêu cầu có ma_BN không null (nghĩa là tên khớp)
+        const ketQua = danhSach.filter(yc => yc.ma_BN !== null);
+
+        res.status(200).json(ketQua);
+    } catch (err) {
+        res.status(500).json({ message: 'Lỗi máy chủ', error: err.message });
+    }
+  };
+
 module.exports = {
     guiYeuCauKham,
     layDanhSachYeuCau,
     layChiTietYeuCau,
     duyetYeuCau,
     huyYeuCau,
+    timKiemYeuCau,
 };

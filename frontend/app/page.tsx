@@ -37,7 +37,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                  Đặt lịch khám ngay
+                  <Link href="/benhnhan/yeucau">Đặt lịch khám ngay</Link> 
                 </Button>
                 <Button size="lg" variant="outline">
                   Tìm hiểu thêm
