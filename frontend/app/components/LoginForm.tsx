@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Eye, EyeOff, Loader2, User, Lock } from 'lucide-react';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Button } from '../components/ui/button';
-import { useAuth } from '../components/AuthContext';
+import { useState } from "react";
+import { Eye, EyeOff, Loader2, User, Lock } from "lucide-react";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Button } from "../components/ui/button";
+import { useAuth } from "../components/AuthContext";
 
 interface LoginPageProps {
   onSwitchToRegister: () => void;
@@ -11,16 +11,16 @@ interface LoginPageProps {
 
 export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const result = await login(email, password);
@@ -28,7 +28,7 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
         setError(result.message);
       }
     } catch {
-      setError('Đã xảy ra lỗi. Vui lòng thử lại.');
+      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +72,7 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
           <div className="relative">
             <Input
               id="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="Nhập mật khẩu"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -110,16 +110,16 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
               Đang đăng nhập...
             </>
           ) : (
-            'Đăng nhập'
+            "Đăng nhập"
           )}
         </Button>
 
         <div className="text-center text-sm text-gray-600">
-          Quên mật khẩu?{' '}
+          Quên mật khẩu?{" "}
           <Button
             variant="link"
             className="text-blue-600 p-0 h-auto"
-            onClick={() => alert('Tính năng đang được phát triển')}
+            onClick={() => alert("Tính năng đang được phát triển")}
             disabled={isLoading}
           >
             Lấy lại ngay
@@ -127,7 +127,7 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
         </div>
 
         <div className="text-center text-sm text-gray-600">
-          Chưa có tài khoản?{' '}
+          Chưa có tài khoản?{" "}
           <Button
             variant="link"
             className="text-blue-600 p-0 h-auto"

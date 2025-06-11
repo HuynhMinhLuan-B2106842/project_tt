@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Button } from '../components/ui/button';
+import { useState } from "react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Button } from "../components/ui/button";
 
 interface RegisterPageProps {
   onSwitchToLogin: () => void;
@@ -12,19 +12,19 @@ interface RegisterPageProps {
 
 export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    role: 'patient',
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    role: "patient",
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -32,35 +32,35 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
     setIsLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp');
+      setError("Mật khẩu xác nhận không khớp");
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
       if (response.ok && data.success) {
-        setSuccess('Đăng ký thành công! Vui lòng đăng nhập.');
+        setSuccess("Đăng ký thành công! Vui lòng đăng nhập.");
         setTimeout(() => {
           onSwitchToLogin(); // ✅ GỌI TRỰC TIẾP CHUYỂN SANG LOGIN
         }, 2000);
       } else {
-        setError(data.error || 'Đăng ký thất bại');
+        setError(data.error || "Đăng ký thất bại");
       }
     } catch {
-      setError('Đã xảy ra lỗi. Vui lòng thử lại.');
+      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +92,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
           <Input
             id="name"
             value={formData.name}
-            onChange={(e) => handleChange('name', e.target.value)}
+            onChange={(e) => handleChange("name", e.target.value)}
             placeholder="Nguyễn Văn A"
             required
             disabled={isLoading}
@@ -105,7 +105,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
             id="email"
             type="email"
             value={formData.email}
-            onChange={(e) => handleChange('email', e.target.value)}
+            onChange={(e) => handleChange("email", e.target.value)}
             placeholder="you@example.com"
             required
             disabled={isLoading}
@@ -118,7 +118,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
             id="phone"
             type="tel"
             value={formData.phone}
-            onChange={(e) => handleChange('phone', e.target.value)}
+            onChange={(e) => handleChange("phone", e.target.value)}
             placeholder="0123456789"
             disabled={isLoading}
           />
@@ -129,9 +129,9 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
           <div className="relative">
             <Input
               id="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={formData.password}
-              onChange={(e) => handleChange('password', e.target.value)}
+              onChange={(e) => handleChange("password", e.target.value)}
               placeholder="Nhập mật khẩu"
               required
               disabled={isLoading}
@@ -159,9 +159,9 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
           <div className="relative">
             <Input
               id="confirmPassword"
-              type={showConfirmPassword ? 'text' : 'password'}
+              type={showConfirmPassword ? "text" : "password"}
               value={formData.confirmPassword}
-              onChange={(e) => handleChange('confirmPassword', e.target.value)}
+              onChange={(e) => handleChange("confirmPassword", e.target.value)}
               placeholder="Nhập lại mật khẩu"
               required
               disabled={isLoading}
@@ -194,12 +194,12 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
               Đang đăng ký...
             </>
           ) : (
-            'Đăng ký'
+            "Đăng ký"
           )}
         </Button>
 
         <div className="text-center text-sm text-gray-600">
-          Đã có tài khoản?{' '}
+          Đã có tài khoản?{" "}
           <Button
             type="button"
             variant="link"
