@@ -39,8 +39,8 @@ const Sidebar = () => {
           </button>
           {openMenus.includes('quytrinh') && (
             <ul className="subMenu">
-              <li><Link href="/admin/mauquytrinh" className="subMenuItem">Mẫu quy trình</Link></li>
-              <li><Link href="/admin/diagram" className="subMenuItem">Sơ đồ quy trình</Link></li>
+              <li><Link href="/admin/bpmn" className="subMenuItem">Mẫu quy trình</Link></li>
+              <li><Link href="/admin/quytrinh" className="subMenuItem">Sơ đồ quy trình</Link></li>
             </ul>
           )}
         </div>

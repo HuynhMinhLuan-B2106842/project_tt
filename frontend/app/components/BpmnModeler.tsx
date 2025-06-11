@@ -1,5 +1,5 @@
 "use client"
-
+import Link from 'next/link';
 import { useEffect, useRef, useState } from "react"
 import { Button } from "./ui/button"
 import { Card } from "./ui/card"
@@ -8,7 +8,7 @@ import { Label } from "./ui/label"
 import { Checkbox } from "./ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { Textarea } from "./ui/textarea"
-import { Download, Upload, Save, FileText, Zap, RotateCcw, Settings, X, Trash2 } from "lucide-react"
+import { Download, Upload, Save, FileText, Zap, RotateCcw, Settings, X, Trash2, Home } from "lucide-react"
 import { toast } from "../hooks/use-toast"
 
 // Import bpmn-js
@@ -488,6 +488,12 @@ export default function BpmnModeler() {
       {/* Danh sách sơ đồ */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
+          <Link href="/admin" className="subMenuItem">
+            <div className="flex items-center gap-6 ">
+              <Home className="w-8 h-8" />
+              <h1 className="text-xl font-semibold text-gray-900">Hệ thống quản lý khám bệnh</h1>
+            </div>
+          </Link>
           <h2 className="text-lg font-semibold text-gray-900">Danh sách quy trình</h2>
         </div>
         <div className="p-4">
