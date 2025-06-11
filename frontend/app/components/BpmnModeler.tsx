@@ -479,7 +479,7 @@ export default function BpmnModeler() {
       {/* Danh sách sơ đồ */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Danh sách sơ đồ</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Danh sách quy trình</h2>
         </div>
         <div className="p-4">
           <Input
@@ -529,7 +529,7 @@ export default function BpmnModeler() {
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-2">
               <FileText className="h-6 w-6 text-blue-600" />
-              <h1 className="text-xl font-semibold text-gray-900">BPMN Modeler</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Quy trình khám bệnh</h1>
             </div>
 
             <div className="flex items-center gap-2">
@@ -736,38 +736,43 @@ export default function BpmnModeler() {
       )}
 
       {/* Modal để nhập tên sơ đồ mới */}
-      {showNewDiagramModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-96 p-6">
-            <h2 className="text-lg font-semibold mb-4">Tạo sơ đồ mới</h2>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="new-diagram-name">Tên sơ đồ</Label>
-                <Input
-                  id="new-diagram-name"
-                  value={tempDiagramName}
-                  onChange={(e) => setTempDiagramName(e.target.value)}
-                  placeholder="Nhập tên sơ đồ"
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowNewDiagramModal(false)
-                    setTempDiagramName("")
-                  }}
-                >
-                  Hủy
-                </Button>
-                <Button onClick={handleCreateNewDiagram}>
-                  Tạo
-                </Button>
-              </div>
-            </div>
-          </Card>
+{showNewDiagramModal && (
+  <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <Card className="w-96 p-6 bg-white shadow-lg">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Tạo sơ đồ mới</h2>
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="new-diagram-name" className="text-gray-700">Tên sơ đồ</Label>
+          <Input
+            id="new-diagram-name"
+            value={tempDiagramName}
+            onChange={(e) => setTempDiagramName(e.target.value)}
+            placeholder="Nhập tên sơ đồ"
+            className="border-gray-300 text-gray-900"
+          />
         </div>
-      )}
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setShowNewDiagramModal(false)
+              setTempDiagramName("")
+            }}
+            className="text-gray-700 border-gray-300"
+          >
+            Hủy
+          </Button>
+          <Button
+            onClick={handleCreateNewDiagram}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Tạo
+          </Button>
+        </div>
+      </div>
+    </Card>
+  </div>
+)}
     </div>
   )
 }
