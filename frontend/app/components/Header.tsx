@@ -136,11 +136,11 @@ export default function Header() {
 
       {/* Auth Modal */}
       <AuthModal
-  isOpen={isAuthModalOpen}
-  onClose={() => setIsAuthModalOpen(false)}
-  defaultTab={authModalTab}
-  onSuccess={() => setIsAuthModalOpen(false)} // 👈 đóng modal khi login thành công
-/>
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          defaultTab={authModalTab}
+          onSuccess={() => setIsAuthModalOpen(false)} 
+        />
     </header>
   );
 }
