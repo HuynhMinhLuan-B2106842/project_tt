@@ -4,7 +4,9 @@ const connectDB = require('./database/config/db');
 const {
   TaiKhoan,
   BenhNhan,
-  YeuCauKham
+  YeuCauKham,
+  LanKham,
+  MauQuyTrinh
 } = require('./database/models');
 
 const runTest = async () => {
@@ -37,8 +39,16 @@ const runTest = async () => {
     trang_thai_YC: 'cho_duyet'
   });
 
+  // 4. Tạo lần khám
+  const lk = await LanKham.create({
+    ma_BN: bn._id,
+    ngay_kham: new Date('2025-06-11'),
+    trang_thai: 'dang_kham',
+    ghi_chu: 'đang khám'
+  });
+
   console.log('✅ Tạo thành công!');
-  console.log({ tk, bn, yc });
+  console.log({ tk, bn, yc, lk });
 
   process.exit();
 };

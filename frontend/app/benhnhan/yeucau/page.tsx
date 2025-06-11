@@ -1,5 +1,8 @@
 "use client"
-import { useState } from 'react';
+
+import { useState } from 'react'
+import Header from '@/app/header'
+import Footer from '@/app/footer'
 
 export default function YeuCauKham() {
   const [idBenhNhan, setIdBenhNhan] = useState('');
@@ -49,66 +52,70 @@ export default function YeuCauKham() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
-      <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">Gửi yêu cầu khám</h2>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">ID Bệnh nhân:</label>
-          <input
-            type="text"
-            placeholder="Nhập ID bệnh nhân"
-            value={idBenhNhan}
-            onChange={(e) => setIdBenhNhan(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+    <>
+      <Header />
+      <main className="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+        <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">Gửi yêu cầu khám</h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">ID Bệnh nhân:</label>
+            <input
+              type="text"
+              placeholder="Nhập ID bệnh nhân"
+              value={idBenhNhan}
+              onChange={(e) => setIdBenhNhan(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Chuyên khoa:</label>
-          <input
-            type="text"
-            value={chuyenKhoa}
-            onChange={(e) => setChuyenKhoa(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Chuyên khoa:</label>
+            <input
+              type="text"
+              value={chuyenKhoa}
+              onChange={(e) => setChuyenKhoa(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Triệu chứng:</label>
-          <textarea
-            value={trieuChung}
-            onChange={(e) => setTrieuChung(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={3}
-            required
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Triệu chứng:</label>
+            <textarea
+              value={trieuChung}
+              onChange={(e) => setTrieuChung(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows={3}
+              required
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ngày muốn khám:</label>
-          <input
-            type="date"
-            value={ngayMuonKham}
-            onChange={(e) => setNgayMuonKham(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Ngày muốn khám:</label>
+            <input
+              type="date"
+              value={ngayMuonKham}
+              onChange={(e) => setNgayMuonKham(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-300"
-        >
-          {loading ? 'Đang gửi...' : 'Gửi yêu cầu'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-300"
+          >
+            {loading ? 'Đang gửi...' : 'Gửi yêu cầu'}
+          </button>
+        </form>
 
-      {message && (
-        <p className="mt-4 text-center text-sm font-medium text-red-600">{message}</p>
-      )}
-    </div>
+        {message && (
+          <p className="mt-4 text-center text-sm font-medium text-red-600">{message}</p>
+        )}
+      </main>
+      <Footer />
+    </>
   );
 }
