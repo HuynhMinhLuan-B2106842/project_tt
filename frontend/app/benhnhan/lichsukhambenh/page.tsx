@@ -18,7 +18,7 @@ interface LanKham {
 export default function LichSuKhamPage() {
   const [lanKhams, setLanKhams] = useState<LanKham[]>([]);
   const [loading, setLoading] = useState(true);
-  const idBenhNhan = '683eb457c21f8a36a0ee8ccb';
+  const idBenhNhan = '6842416a07ee4cc95a81562a';
 
   useEffect(() => {
     const fetchData = async () => {
