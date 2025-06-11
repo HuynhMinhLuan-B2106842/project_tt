@@ -26,8 +26,8 @@ const Sidebar = () => {
           {openMenus.includes('hoso') && (
             <ul className="subMenu">
               <li><Link href="/admin?section=benhnhan" className="subMenuItem">Danh sách bệnh nhân</Link></li>
-              <li><Link href="/admin/yeucau" className="subMenuItem">Yêu cầu khám</Link></li>
-              <li><Link href="/admin/lankham" className="subMenuItem">Lần khám</Link></li>
+              <li><Link href="/admin?section=yeucau" className="subMenuItem">Yêu cầu khám</Link></li>
+              <li><Link href="/admin?section=lankham" className="subMenuItem">Lần khám</Link></li>
               <li><Link href="/admin/thucthi" className="subMenuItem">Thực thi bước</Link></li>
             </ul>
           )}
