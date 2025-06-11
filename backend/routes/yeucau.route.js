@@ -5,7 +5,8 @@ const {
     layDanhSachYeuCau,
     layChiTietYeuCau,
     duyetYeuCau,
-    huyYeuCau
+    huyYeuCau,
+    timKiemYeuCau
 } = require("../controllers/yeucau.controller");
 
 /**
@@ -102,5 +103,32 @@ router.put("/duyet/:id", duyetYeuCau);
  *         description: Yêu cầu đã bị hủy
  */
 router.delete("/huy/:id", huyYeuCau);
+
+/**
+ * @swagger
+ * /api/yeucau/timkiem/{ten}:
+ *   get:
+ *     summary: Tìm kiếm yêu cầu khám theo tên bệnh nhân
+ *     tags: [YeuCau]
+ *     parameters:
+ *       - in: path
+ *         name: ten
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Tên bệnh nhân cần tìm
+ *     responses:
+ *       200:
+ *         description: Danh sách yêu cầu khám tìm được
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/YeuCau'
+ *       500:
+ *         description: Lỗi máy chủ
+ */
+router.get('/timkiem/:ten', timKiemYeuCau);
 
 module.exports = router;
