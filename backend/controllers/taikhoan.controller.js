@@ -41,9 +41,23 @@ exports.dangNhap = async (req, res) => {
   }
 };
 
+exports.layThongTinTaiKhoan = async (req, res) => {
+  try {
+    const taiKhoan = await TaiKhoan.findById(req.params.id).select('-mat_khau');
+
+    if (!taiKhoan) {
+      return res.status(404).json({ error: "Không tìm thấy tài khoản" });
+    }
+
+    res.json(taiKhoan);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.laydanhSachTaiKhoan = async (req, res) => {
     try{
-        const ds = await TaiKhoan.find();
+        const ds = await TaiKhoan.find().select('-mat_khau')
         res.json(ds);
     } catch(err){
         res.status(500).json({ error: err.message});
