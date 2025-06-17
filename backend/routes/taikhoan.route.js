@@ -13,7 +13,7 @@ const {
  * @swagger
  * /api/taikhoan/register:
  *   post:
- *     summary: Đăng ký tài khoản
+ *     summary: Đăng ký tài khoản (vai trò mặc định là patient)
  *     tags: [Taikhoan]
  *     requestBody:
  *       required: true
@@ -21,22 +21,24 @@ const {
  *         application/json:
  *           schema:
  *             type: object
- *             required: [ten_dang_nhap, mat_khau, vai_tro]
+ *             required: [ten_dang_nhap, mat_khau]
  *             properties:
- *               ten_TK:
- *                 type: string
  *               ten_dang_nhap:
  *                 type: string
+ *                 description: Tên đăng nhập (email hoặc username)
  *               mat_khau:
  *                 type: string
- *               vai_tro:
- *                 type: string
- *                 enum: [patient, staff, admin]
+ *                 description: Mật khẩu
  *     responses:
  *       201:
- *         description: Tài khoản được tạo
+ *         description: Tài khoản được tạo thành công
+ *       400:
+ *         description: Tên đăng nhập đã tồn tại
+ *       500:
+ *         description: Lỗi server
  */
 router.post("/register", dangKy);
+
 
 /**
  * @swagger
@@ -55,6 +57,8 @@ router.post("/register", dangKy);
  *               ten_dang_nhap:
  *                 type: string
  *               mat_khau:
+ *                 type: string
+ *               repassword:
  *                 type: string
  *     responses:
  *       200:

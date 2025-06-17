@@ -9,7 +9,7 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultTab?: 'login' | 'register';
-  onSuccess?: () => void;
+  onSuccess: () => void;
 }
 
 export default function AuthModal({
@@ -35,12 +35,13 @@ export default function AuthModal({
           <LoginForm
             onSwitchToRegister={handleSwitchToRegister}
             onClose={onClose}
-            onSuccess={onSuccess} // ✅ truyền xuống
+            onSuccess={onSuccess}
           />
         ) : (
           <RegisterForm
             onSwitchToLogin={handleSwitchToLogin}
             onClose={onClose}
+            onSuccess={onSuccess}
           />
         )}
       </DialogContent>

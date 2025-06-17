@@ -5,19 +5,21 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
+import { dangKy } from "@/services/taikhoan.service";
+import { useAuth } from "../components/AuthContext";
+import { AxiosError } from "axios";
 
 interface RegisterPageProps {
   onSwitchToLogin: () => void;
+  onSuccess: () => void;
+  onClose: () => void;
 }
 
-export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
+export default function RegisterPage({ onSwitchToLogin, onSuccess, onClose }: RegisterPageProps) {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
-    role: "patient",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +27,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { login } = useAuth();
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -43,24 +46,19 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
     }
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      await dangKy(formData.email, formData.password, formData.confirmPassword);
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        setSuccess("Đăng ký thành công! Vui lòng đăng nhập.");
-        setTimeout(() => {
-          onSwitchToLogin(); // ✅ GỌI TRỰC TIẾP CHUYỂN SANG LOGIN
-        }, 2000);
+      const result = await login(formData.email, formData.password);
+      if (result.success) {
+        setSuccess("Đăng ký và đăng nhập thành công!");
+        onSuccess?.();
+        onClose?.();
       } else {
-        setError(data.error || "Đăng ký thất bại");
+        setError("Đăng ký thành công nhưng đăng nhập thất bại");
       }
-    } catch {
-      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ error: string }>;
+      setError(axiosError.response?.data?.error || "Đăng ký thất bại. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
@@ -68,12 +66,8 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
 
   return (
     <div className="w-full max-w-md p-10">
-      <h2 className="text-3xl font-bold text-center text-blue-600 mb-2">
-        Đăng ký
-      </h2>
-      <p className="text-center text-gray-600 mb-6">
-        Tạo tài khoản để tiếp tục
-      </p>
+      <h2 className="text-3xl font-bold text-center text-blue-600 mb-2">Đăng ký</h2>
+      <p className="text-center text-gray-600 mb-6">Tạo tài khoản để tiếp tục</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -88,18 +82,6 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
         )}
 
         <div>
-          <Label htmlFor="name">Họ và tên</Label>
-          <Input
-            id="name"
-            value={formData.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            placeholder="Nguyễn Văn A"
-            required
-            disabled={isLoading}
-          />
-        </div>
-
-        <div>
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -108,18 +90,6 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
             onChange={(e) => handleChange("email", e.target.value)}
             placeholder="you@example.com"
             required
-            disabled={isLoading}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="phone">Số điện thoại</Label>
-          <Input
-            id="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={(e) => handleChange("phone", e.target.value)}
-            placeholder="0123456789"
             disabled={isLoading}
           />
         </div>
@@ -145,11 +115,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
               onClick={() => setShowPassword(!showPassword)}
               disabled={isLoading}
             >
-              {showPassword ? (
-                <EyeOff className="w-4 h-4" />
-              ) : (
-                <Eye className="w-4 h-4" />
-              )}
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </Button>
           </div>
         </div>
@@ -174,11 +140,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               disabled={isLoading}
             >
-              {showConfirmPassword ? (
-                <EyeOff className="w-4 h-4" />
-              ) : (
-                <Eye className="w-4 h-4" />
-              )}
+              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </Button>
           </div>
         </div>
