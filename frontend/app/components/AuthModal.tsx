@@ -9,18 +9,17 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultTab?: 'login' | 'register';
+  onSuccess?: () => void;
 }
 
 export default function AuthModal({
   isOpen,
   onClose,
   defaultTab = 'login',
+  onSuccess,
 }: AuthModalProps) {
-  const [currentTab, setCurrentTab] = useState<'login' | 'register'>(
-    defaultTab
-  );
+  const [currentTab, setCurrentTab] = useState<'login' | 'register'>(defaultTab);
 
-  // 🛠 Cập nhật tab mỗi khi defaultTab thay đổi
   useEffect(() => {
     setCurrentTab(defaultTab);
   }, [defaultTab]);
@@ -36,6 +35,7 @@ export default function AuthModal({
           <LoginForm
             onSwitchToRegister={handleSwitchToRegister}
             onClose={onClose}
+            onSuccess={onSuccess} // ✅ truyền xuống
           />
         ) : (
           <RegisterForm

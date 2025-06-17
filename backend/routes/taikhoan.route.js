@@ -6,6 +6,7 @@ const {
     laydanhSachTaiKhoan,
     capNhatTaiKhoan,
     xoaTaiKhoan,
+    layThongTinTaiKhoan,
 } = require("../controllers/taikhoan.controller");
 
 /**
@@ -72,6 +73,42 @@ router.post("/login", dangNhap);
  *         description: Trả về danh sách
  */
 router.get("/list", laydanhSachTaiKhoan);
+
+/**
+ * @swagger
+ * /api/taikhoan/{id}:
+ *   get:
+ *     summary: Lấy thông tin tài khoản theo ID
+ *     tags: [Taikhoan]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID tài khoản MongoDB
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Trả về thông tin tài khoản
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 ten_TK:
+ *                   type: string
+ *                 ten_dang_nhap:
+ *                   type: string
+ *                 vai_tro:
+ *                   type: string
+ *       404:
+ *         description: Không tìm thấy tài khoản
+ *       500:
+ *         description: Lỗi máy chủ
+ */
+router.get('/:id', layThongTinTaiKhoan);
 
 /**
  * @swagger
