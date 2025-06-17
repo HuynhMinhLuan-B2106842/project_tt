@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await dangNhap(username, password)
       localStorage.setItem('token', res.token)
       setToken(res.token)
-      return { success: true, message: '' }
+      return { success: true, message: "" };
     } catch (err) {
       const axiosError = err as AxiosError<{ error: string }>
       return {

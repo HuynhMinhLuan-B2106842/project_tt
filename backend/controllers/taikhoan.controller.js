@@ -1,20 +1,34 @@
 const TaiKhoan = require("../models/taikhoan.model");
+const Benhnhan = require("../models/benhnhan.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 exports.dangKy = async (req, res) => {
   try {
-    const { ten_TK, ten_dang_nhap, mat_khau, vai_tro } = req.body;
+    const { ten_dang_nhap, mat_khau, repassword  } = req.body;
 
     const existing = await TaiKhoan.findOne({ ten_dang_nhap });
     if (existing) return res.status(400).json({ error: "Tên đăng nhập đã tồn tại" });
 
+    if (!mat_khau || !repassword || mat_khau !== repassword) {
+      return res.status(400).json({ error: "Mật khẩu xác nhận không khớp" });
+    }
+    
     const hashed = await bcrypt.hash(mat_khau, 10);
     const taiKhoanMoi = await TaiKhoan.create({
-      ten_TK,
       ten_dang_nhap,
       mat_khau: hashed,
-      vai_tro
+      vai_tro: 'patient'
+    });
+
+    await Benhnhan.create({
+      tai_khoan_id: taiKhoanMoi._id,
+      ho_ten: null,
+      ngay_sinh: null,
+      gioi_tinh: null,
+      email: null,
+      dia_chi: null,
+      dien_thoai: null
     });
 
     res.status(201).json({ message: "Đăng ký thành công", taiKhoan: taiKhoanMoi });

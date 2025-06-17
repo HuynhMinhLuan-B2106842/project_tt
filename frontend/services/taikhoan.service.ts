@@ -13,8 +13,12 @@ export interface TaiKhoan {
 }
 
 // Đăng ký tài khoản
-export const dangKy = async (payload: TaiKhoan) => {
-  const res = await api.post('/taikhoan/dangky', payload)
+export const dangKy = async (ten_dang_nhap: string, mat_khau: string, repassword: string) => {
+  const res = await api.post('/taikhoan/register', {
+    ten_dang_nhap,
+    mat_khau,
+    repassword
+  })
   return res.data
 }
 
