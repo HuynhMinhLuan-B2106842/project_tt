@@ -17,10 +17,7 @@ interface YeuCau {
 
 interface LanKham {
     _id: string;
-    yeu_cau_id: {
-        ma_BN: { ho_ten: string };
-        ngay_muon_kham: string;
-    };
+    ma_BN: { ho_ten: string };
     ngay_kham: string;
     ghi_chu?: string;
 }
@@ -133,7 +130,7 @@ export default function LanKhamPage() {
                 <thead className="bg-gray-100">
                     <tr>
                         <th className="border px-3 py-2">Họ tên</th>
-                        <th className="border px-3 py-2">Ngày yêu cầu</th>
+                        
                         <th className="border px-3 py-2">Ngày khám</th>
                         <th className="border px-3 py-2">Ghi chú</th>
                     </tr>
@@ -142,11 +139,9 @@ export default function LanKhamPage() {
                     {dsLanKham.map((lk) => (
                         <tr key={lk._id}>
                             <td className="border px-3 py-2">
-                                {lk.yeu_cau_id?.ma_BN?.ho_ten || 'Không có dữ liệu'}
+                                {lk.ma_BN?.ho_ten || 'Không có dữ liệu'}
                             </td>
-                            <td className="border px-3 py-2">
-                                {lk.yeu_cau_id?.ngay_muon_kham ? new Date(lk.yeu_cau_id.ngay_muon_kham).toLocaleDateString() : '---'}
-                            </td>
+                           
                             <td className="border px-3 py-2">
                                 {lk.ngay_kham ? new Date(lk.ngay_kham).toLocaleDateString() : '---'}
                             </td>
