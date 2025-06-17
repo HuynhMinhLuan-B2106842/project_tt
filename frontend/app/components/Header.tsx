@@ -77,7 +77,7 @@ export default function Header() {
                 onChange={handleDropdownChange}
                 className="text-blue-900 bg-white border border-gray-300 px-3 py-1 rounded"
               >
-                <option value="">{user.ten_TK}</option>
+                <option value="">{user.ten_dang_nhap}</option>
                 {user.vai_tro === 'admin' && <option value="admin">Quản lý</option>}
                 <option value="logout">Đăng xuất</option>
               </select>

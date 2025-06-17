@@ -8,11 +8,11 @@ import { useAuth } from '../components/AuthContext';
 
 interface LoginPageProps {
   onSwitchToRegister: () => void;
-  onClose: () => void;
-  onSuccess: () => void; // ✅ thêm mới
+  onSuccess: () => void;
+  onClose: () => void; 
 }
 
-export default function LoginPage({ onSwitchToRegister, onClose, onSuccess }: LoginPageProps) {
+export default function LoginPage({ onSwitchToRegister, onSuccess }: LoginPageProps) {
   const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ export default function LoginPage({ onSwitchToRegister, onClose, onSuccess }: Lo
     try {
       const result = await login(username, password);
       if (result.success) {
-        onSuccess(); // ✅ đóng modal khi login thành công
+        onSuccess();
       } else {
         setError(result.message || '');
       }
