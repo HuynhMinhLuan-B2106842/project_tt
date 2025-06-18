@@ -89,6 +89,16 @@ const xoaLanKham = async (req, res) => {
         res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
     }
   };
+const layLanKhamCuaToi = async (req, res) => {
+    try {
+        const benhNhanId = req.user.id; // Lấy từ token đã giải mã
+
+        const danhSach = await Lankham.find({ ma_BN: benhNhanId }).populate("ma_BN");
+        res.status(200).json(danhSach);
+    } catch (err) {
+        res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
+    }
+};
 
 module.exports = {
     taoLanKham,
@@ -96,4 +106,5 @@ module.exports = {
     layChiTietLanKham,
     capNhatTrangThaiLanKham,
     xoaLanKham,
+    layLanKhamCuaToi,
 };

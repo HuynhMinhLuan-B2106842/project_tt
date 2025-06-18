@@ -1,13 +1,29 @@
 const express = require("express");
 const router = express.Router();
+const xacThucNguoiDung  = require("../middleware/auth");
 const {
     taoLanKham,
     layDanhSachLanKham,
     layChiTietLanKham,
     capNhatTrangThaiLanKham,
     xoaLanKham,
+    layLanKhamCuaToi,
 } = require("../controllers/lankham.controller");
 
+/**
+ * @swagger
+ * /api/lankham/benhnhan/me:
+ *   get:
+ *     summary: Lấy danh sách lần khám của bệnh nhân đang đăng nhập
+ *     tags: [Lankham]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+
+router.get("/benhnhan/me", xacThucNguoiDung, layLanKhamCuaToi);
 /**
  * @swagger
  * /api/lankham:
