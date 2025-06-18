@@ -9,34 +9,8 @@ const {
     timKiemYeuCau
 } = require("../controllers/yeucau.controller");
 
-/**
- * @swagger
- * /api/yeucau:
- *   post:
- *     summary: Bệnh nhân gửi yêu cầu khám
- *     tags: [YeuCau]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [ma_BN, ngay_muon_kham, chuyen_khoa, trieu_chung]
- *             properties:
- *               ma_BN:
- *                 type: string
- *               ngay_muon_kham:
- *                 type: string
- *                 format: date
- *               chuyen_khoa:
- *                 type: string
- *               trieu_chung:
- *                 type: string
- *     responses:
- *       201:
- *         description: Yêu cầu khám đã được gửi
- */
-router.post("/", guiYeuCauKham);
+const auth = require('../middleware/auth');
+router.post('/', auth, guiYeuCauKham);
 
 /**
  * @swagger

@@ -63,6 +63,24 @@ const layChiTietBenhNhan = async (req, res) => {
     }
 };
 
+
+// Lấy chi tiết hồ sơ bệnh nhân theo tài khoản ID
+const layChiTietBenhNhanTheoID_TK = async (req, res) => {
+    try {
+        const { id_tk } = req.params;
+
+        const benhnhan = await Benhnhan.findOne({ tai_khoan_id: id_tk });
+
+        if (!benhnhan) {
+            return res.status(404).json({ message: "Không tìm thấy hồ sơ bệnh nhân theo tài khoản" });
+        }
+
+        res.status(200).json(benhnhan);
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi máy chủ", error: error.message });
+    }
+};
+
 // Cập nhật hồ sơ bệnh nhân theo ID
 const capNhatHoSoBenhNhan = async (req, res) => {
     try {
@@ -114,6 +132,7 @@ module.exports = {
     taoHoSoBenhNhan,
     layDanhSachBenhNhan,
     layChiTietBenhNhan,
+    layChiTietBenhNhanTheoID_TK,
     capNhatHoSoBenhNhan,
     xoaBenhNhan,
     Timkiembenhnhan,

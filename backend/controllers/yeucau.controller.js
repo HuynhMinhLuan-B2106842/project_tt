@@ -1,14 +1,28 @@
 const Yeucau = require("../models/yeucau.model");
-
+const Benhnhan = require("../models/benhnhan.model");
 const guiYeuCauKham = async (req, res) => {
     try {
-        const yeucau = new Yeucau(req.body);
+        const taiKhoanId = req.user.id;
+
+        // Tìm bệnh nhân tương ứng với tài khoản
+        const benhnhan = await Benhnhan.findOne({ tai_khoan_id: taiKhoanId });
+        if (!benhnhan) {
+            return res.status(404).json({ message: "Không tìm thấy hồ sơ bệnh nhân" });
+        }
+
+        const yeucau = new Yeucau({
+            ma_BN: benhnhan._id,
+            chuyen_khoa: req.body.chuyen_khoa,
+            trieu_chung: req.body.trieu_chung,
+            ngay_muon_kham: req.body.ngay_muon_kham,
+        });
+
         await yeucau.save();
         res.status(201).json({ message: "Gửi yêu cầu thành công", yeucau });
     } catch (err) {
         res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
     }
-};
+  };
 
 const layDanhSachYeuCau = async (req, res) => {
     try {

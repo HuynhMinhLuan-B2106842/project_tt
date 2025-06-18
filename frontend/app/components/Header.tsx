@@ -43,6 +43,8 @@ export default function Header() {
       logout();
     } else if (e.target.value === 'admin') {
       window.location.href = '/admin';
+    } else if (e.target.value === 'profile') {
+      window.location.href = '/benhnhan/xemhoso';
     }
   };
 
@@ -78,6 +80,7 @@ export default function Header() {
                 className="text-blue-900 bg-white border border-gray-300 px-3 py-1 rounded"
               >
                 <option value="">{user.ten_dang_nhap}</option>
+                <option value="profile">Hồ sơ</option>
                 {user.vai_tro === 'admin' && <option value="admin">Quản lý</option>}
                 <option value="logout">Đăng xuất</option>
               </select>
