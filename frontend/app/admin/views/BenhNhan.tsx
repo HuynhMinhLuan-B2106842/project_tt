@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { getAllBenhNhan, timkiembenhnhan } from '@/services/benhnhan.service'
+import { getAllBenhNhan, timkiembenhnhan, capNhatBenhNhan, xoaBenhNhan } from '@/services/benhnhan.service'
+import EditBenhNhanModal from '@/app/components/CapNhatBNForm'
 
 interface BenhNhan {
   _id: string
@@ -17,7 +18,27 @@ export default function YeuCau() {
   const [benhNhans, setBenhNhans] = useState<BenhNhan[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [editingBenhNhan, setEditingBenhNhan] = useState<BenhNhan | null>(null)
+  const [formData, setFormData] = useState({
+    ho_ten: '',
+    ngay_sinh: '',
+    gioi_tinh: '',
+    dien_thoai: '',
+    email: '',
+    dia_chi: ''
+  })
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm('Bạn có chắc chắn muốn xóa hồ sơ bệnh nhân này?')
+    if (!confirmed) return
 
+    try {
+      await xoaBenhNhan(id)
+      fetchAll() // cập nhật lại danh sách sau khi xóa
+    } catch (error) {
+      console.error('❌ Lỗi khi xóa bệnh nhân:', error)
+      alert('Xóa thất bại. Vui lòng thử lại.')
+    }
+  }
   const fetchAll = () => {
     getAllBenhNhan()
       .then(setBenhNhans)
@@ -56,6 +77,7 @@ export default function YeuCau() {
 
   return (
     <div>
+      
       <h1 className="text-2xl font-bold mb-4">📄 Danh sách bệnh nhân</h1>
 
       {/* Thanh tìm kiếm */}
@@ -89,6 +111,7 @@ export default function YeuCau() {
               <th className="border px-4 py-2">Email</th>
               <th className="border px-4 py-2">Địa chỉ</th>
               <th className="border px-4 py-2">Ngày tạo hồ sơ</th>
+              <th className="border px-4 py-2">Hoạt động</th>
             </tr>
           </thead>
           )}
@@ -109,12 +132,53 @@ export default function YeuCau() {
                   <td className="border px-4 py-2">{bn.email}</td>
                   <td className="border px-4 py-2">{bn.dia_chi}</td>
                   <td className="border px-4 py-2">{new Date(bn.ngay_tao_ho_so).toLocaleString()}</td>
+                  <td className="border px-4 py-2">
+                    <button
+                      onClick={() => {
+                        setEditingBenhNhan(bn)
+                        setFormData({
+                          ho_ten: bn.ho_ten,
+                          ngay_sinh: bn.ngay_sinh.slice(0, 10),
+                          gioi_tinh: bn.gioi_tinh,
+                          dien_thoai: bn.dien_thoai,
+                          email: bn.email,
+                          dia_chi: bn.dia_chi
+                        })
+                      }}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      onClick={() => handleDelete(bn._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                    >
+                      Xóa
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+      {editingBenhNhan && (
+        <EditBenhNhanModal
+          formData={formData}
+          setFormData={setFormData}
+          onCancel={() => setEditingBenhNhan(null)}
+          onSave={async () => {
+            try {
+              await capNhatBenhNhan(editingBenhNhan._id, formData)
+              setEditingBenhNhan(null)
+              fetchAll()
+            } catch (err) {
+              console.error(err)
+            }
+          }}
+        />
+      )}
+
     </div>
   )
 }

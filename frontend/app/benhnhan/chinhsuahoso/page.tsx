@@ -2,7 +2,7 @@
 
 import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Header from "@/app/header";
+import Header from "@/app/components/Header";
 import Footer from "@/app/footer";
 
 interface BenhNhan {
@@ -42,9 +42,17 @@ export default function ChinhSuaHoSo() {
                 return res.json();
             })
             .then((data) => {
-                setBenhNhan(data);
+                setBenhNhan({
+                    ho_ten: data.ho_ten || "",
+                    ngay_sinh: data.ngay_sinh ? data.ngay_sinh.slice(0, 10) : "",
+                    gioi_tinh: data.gioi_tinh || "",
+                    dien_thoai: data.dien_thoai || "",
+                    email: data.email || "",
+                    dia_chi: data.dia_chi || "",
+                    ngay_tao_ho_so: data.ngay_tao_ho_so || "",
+                });
                 setLoading(false);
-            })
+            })                  
             .catch((err) => {
                 setError(err.message);
                 setLoading(false);
@@ -112,7 +120,7 @@ export default function ChinhSuaHoSo() {
                             <input
                                 type="date"
                                 name="ngay_sinh"
-                                value={benhNhan.ngay_sinh.slice(0, 10)} // cắt ngày để phù hợp input date
+                                value={benhNhan.ngay_sinh}
                                 onChange={handleChange}
                                 required
                                 className="mt-1 block w-full border rounded px-3 py-2"

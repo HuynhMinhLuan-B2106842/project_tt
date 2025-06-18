@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Header from "@/app/header";
+import Header from "@/app/components/Header";
 import Footer from "@/app/footer";
+import { getUserIdFromToken } from "@/utils/token";
 
 interface BenhNhan {
     ho_ten: string;
@@ -15,17 +16,27 @@ interface BenhNhan {
 }
 
 export default function XemHoSo() {
-    const searchParams = useSearchParams();
-    const id = searchParams.get("id");
     const router = useRouter();
+    const [id, setId] = useState<string | null>(null);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [benhNhan, setBenhNhan] = useState<BenhNhan | null>(null);
 
     useEffect(() => {
+        const userId = getUserIdFromToken();
+        if (userId) {
+            setId(userId);
+        } else {
+            setError("Bạn chưa đăng nhập");
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
         if (!id) return;
-        fetch(`http://localhost:9000/api/benhnhan/${id}`)
+
+        fetch(`http://localhost:9000/api/benhnhan/taikhoan/${id}`)
             .then(res => {
                 if (!res.ok) throw new Error("Không lấy được dữ liệu hồ sơ");
                 return res.json();
@@ -39,11 +50,12 @@ export default function XemHoSo() {
                 setLoading(false);
             });
     }, [id]);
+    
 
     // Hàm xử lý click nút chỉnh sửa
     const handleEdit = () => {
         if (id) {
-            router.push(`/benhnhan/chinhsuahoso?id=${id}`);
+            router.push(`/benhnhan/chinhsuahoso?id=${(benhNhan as any)._id}`);
         }
     };
 

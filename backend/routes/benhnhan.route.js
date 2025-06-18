@@ -7,6 +7,7 @@ const {
     capNhatHoSoBenhNhan,
     xoaBenhNhan,
     Timkiembenhnhan,
+    layChiTietBenhNhanTheoID_TK,
 } = require("../controllers/benhnhan.controller");
 
 /**
@@ -190,5 +191,26 @@ router.put("/:id", capNhatHoSoBenhNhan);
  *         description: Hồ sơ bệnh nhân đã được xoá
  */
 router.delete("/:id", xoaBenhNhan);
+
+/**
+ * @swagger
+ * /api/benhnhan/taikhoan/{id_tk}:
+ *   get:
+ *     summary: Lấy chi tiết hồ sơ bệnh nhân theo ID tài khoản
+ *     tags: [BenhNhan]
+ *     parameters:
+ *       - name: id_tk
+ *         in: path
+ *         required: true
+ *         description: ID tài khoản liên kết với hồ sơ bệnh nhân
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Hồ sơ bệnh nhân tương ứng với tài khoản
+ *       404:
+ *         description: Không tìm thấy hồ sơ bệnh nhân
+ */
+router.get('/taikhoan/:id_tk', layChiTietBenhNhanTheoID_TK);
 
 module.exports = router;
