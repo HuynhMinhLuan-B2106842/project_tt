@@ -25,7 +25,7 @@ app.use('/api/lankham', require('./routes/lankham.route'));
 app.use('/api/blocks', require('./routes/Block.route'));
 app.use('/api/connections', require('./routes/Connection.route'));
 app.use('/api/diagrams', require('./routes/Diagram.route'));
-
+app.use('/api/quytrinh', require('./routes/quytrinh.route'));
 swaggerSetup(app);
 
 module.exports = app;
