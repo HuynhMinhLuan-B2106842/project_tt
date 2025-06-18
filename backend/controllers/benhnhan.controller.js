@@ -24,7 +24,7 @@ const taoHoSoBenhNhan = async (req, res) => {
 // Lấy danh sách hồ sơ bệnh nhân
 const layDanhSachBenhNhan = async (req, res) => {
     try {
-        const benhnhanList = await Benhnhan.find();
+        const benhnhanList = await Benhnhan.find().populate('tai_khoan_id', 'ten_dang_nhap');
         res.status(200).json(benhnhanList);
     } catch (error) {
         res.status(500).json({ message: "Lỗi máy chủ", error: error.message });

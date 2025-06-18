@@ -51,7 +51,7 @@ const Sidebar = () => {
           </button>
           {openMenus.includes('hethong') && (
             <ul className="subMenu">
-              <li><Link href="/admin/taikhoan" className="subMenuItem">Tài khoản người dùng</Link></li>
+              <li><Link href="/admin?section=taikhoan" className="subMenuItem">Tài khoản người dùng</Link></li>
               <li><Link href="/admin/thongke" className="subMenuItem">Thống kê & Báo cáo</Link></li>
             </ul>
           )}
