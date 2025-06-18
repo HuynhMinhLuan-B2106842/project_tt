@@ -56,13 +56,16 @@ export default function YeuCauPage() {
 
     const handleDuyet = async (id: string) => {
         try {
-            await duyetYeuCau(id);
-            fetchYeuCau(); // Refresh danh sách
+          console.log("🔍 Duyệt yêu cầu ID:", id);
+          const res = await duyetYeuCau(id);
+          console.log("✅ Duyệt thành công:", res);
+          fetchYeuCau();
         } catch (err) {
-            setError('Lỗi khi duyệt yêu cầu');
+          console.error("❌ Lỗi khi duyệt:", err);
+          setError('Lỗi khi duyệt yêu cầu');
         }
-    };
-
+      };
+      
     const handleTuChoi = async (id: string) => {
         try {
             await tuChoiYeuCau(id);

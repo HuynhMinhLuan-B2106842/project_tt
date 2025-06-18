@@ -47,21 +47,38 @@ const layChiTietYeuCau = async (req, res) => {
 };
 
 const duyetYeuCau = async (req, res) => {
+    const LanKham = require("../models/lankham.model"); // nhớ thêm dòng này!
     try {
-        const { id } = req.params;
-        const yeucau = await Yeucau.findByIdAndUpdate(
-            id,
-            { trang_thai_YC: "da_duyet" },
-            { new: true }
-        );
-        if (!yeucau) {
-            return res.status(404).json({ message: "Không tìm thấy yêu cầu để duyệt" });
+        const id = req.params.id;
+        const yeuCau = await Yeucau.findById(id).populate('ma_BN');
+
+        if (!yeuCau) {
+            return res.status(404).json({ message: 'Không tìm thấy yêu cầu' });
         }
-        res.status(200).json({ message: "Đã duyệt yêu cầu khám", yeucau });
-    } catch (err) {
-        res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
+
+        yeuCau.trang_thai_YC = 'da_duyet';
+        await yeuCau.save();
+
+        const maBN = yeuCau.ma_BN?._id || yeuCau.ma_BN;
+        if (!maBN) {
+            return res.status(400).json({ message: 'Thiếu thông tin bệnh nhân để tạo lần khám' });
+        }
+
+        await LanKham.create({
+            ma_BN: maBN,
+            ngay_kham: new Date(),
+            trang_thai: 'dang_kham',
+            ghi_chu: ''
+        });
+
+        return res.status(200).json({ message: 'Duyệt và tạo lần khám thành công' });
+    } catch (error) {
+        console.error("❌ Lỗi trong duyetYeuCau:", error);
+        return res.status(500).json({ message: 'Lỗi server khi duyệt yêu cầu' });
     }
 };
+
+  
 
 const huyYeuCau = async (req, res) => {
     try {
