@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import AdminLayout from '@/app/components/layout/AdminLayout'
 import YeuCau from './views/YeuCau'
 import LanKham from './views/LanKham'
-// import ThucThi from './views/ThucThi'
+import TaiKhoan from './views/TaiKhoan'
 import BenhNhan from './views/BenhNhan'
 
 export default function AdminPage() {
@@ -16,8 +16,8 @@ export default function AdminPage() {
         return <YeuCau />
       case 'lankham':
         return <LanKham />
-      // case 'thucthi':
-      //   return <ThucThi />
+      case 'taikhoan':
+        return <TaiKhoan />
       case 'benhnhan':
         return <BenhNhan />
       default:

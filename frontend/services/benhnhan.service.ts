@@ -10,7 +10,7 @@ export const timkiembenhnhan = async (ten : string) => {
     return res.data
 }
 
-export const capNhatBenhNhan = async (id: string, data: any) => {
+export const capNhatBenhNhan = async (id: string, data: unknown) => {
   const res = await api.put(`/benhnhan/${id}`, data)
   return res.data
 }

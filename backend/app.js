@@ -17,13 +17,8 @@ connectDB();
 
 app.use('/api/taikhoan', require('./routes/taikhoan.route'));
 app.use('/api/benhnhan', require('./routes/benhnhan.route'));
-app.use('/api/mauquytrinh', require('./routes/mauquytrinh.route'));
-app.use('/api/buocthucthi', require('./routes/buocthucthi.route'));
-app.use('/api/thucthiquytrinh', require('./routes/thucthi.route'));
 app.use('/api/yeucau', require('./routes/yeucau.route'));
 app.use('/api/lankham', require('./routes/lankham.route'));
-app.use('/api/blocks', require('./routes/Block.route'));
-app.use('/api/connections', require('./routes/Connection.route'));
 app.use('/api/diagrams', require('./routes/Diagram.route'));
 app.use('/api/quytrinh', require('./routes/quytrinh.route'));
 swaggerSetup(app);
