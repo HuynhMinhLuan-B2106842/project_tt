@@ -64,7 +64,7 @@ export default function Header() {
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-6">
           <Link href="/" className="text-blue-900 font-medium hover:text-blue-600">Trang chủ</Link>
-          <Link href="/quy-trinh" className="text-blue-900 font-medium hover:text-blue-600">Quy trình khám</Link>
+          <Link href="/benhnhan/lichsukhambenh" className="text-blue-900 font-medium hover:text-blue-600">Lịch sử lần khám</Link>
           <Link href="/dich-vu" className="text-blue-900 font-medium hover:text-blue-600">Dịch vụ</Link>
           <Link href="/bac-si" className="text-blue-900 font-medium hover:text-blue-600">Đội ngũ bác sĩ</Link>
           <Link href="/lien-he" className="text-blue-900 font-medium hover:text-blue-600">Liên hệ</Link>

@@ -62,12 +62,27 @@ export default function ChinhSuaHoSo() {
     // Xử lý thay đổi input
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
         const { name, value } = e.target;
-        setBenhNhan((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        if (name === "dien_thoai") {
+            const formatted = formatPhoneNumber(value);
+            setBenhNhan((prev) => ({ ...prev, [name]: formatted }));
+        } else {
+            setBenhNhan((prev) => ({ ...prev, [name]: value }));
+          }
     }
+    // Hàm định dạng số điện thoại: 0901 234 567
+    function formatPhoneNumber(value: string) {
+        // Chỉ lấy số
+        const digits = value.replace(/\D/g, "");
 
+        // Cắt nhóm: 4 số - 3 số - 3 số
+        const match = digits.match(/^(\d{0,4})(\d{0,3})(\d{0,3})$/);
+
+        if (!match) return digits;
+
+        const [, g1, g2, g3] = match;
+        return [g1, g2, g3].filter(Boolean).join(" ");
+    }
+  
     // Xử lý submit form
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
@@ -151,6 +166,7 @@ export default function ChinhSuaHoSo() {
                                 value={benhNhan.dien_thoai}
                                 onChange={handleChange}
                                 required
+                                pattern="(\d{4}) (\d{3}) (\d{3})"
                                 className="mt-1 block w-full border rounded px-3 py-2"
                             />
                         </label>
@@ -172,6 +188,7 @@ export default function ChinhSuaHoSo() {
                                 name="dia_chi"
                                 value={benhNhan.dia_chi}
                                 onChange={handleChange}
+                                required
                                 rows={3}
                                 className="mt-1 block w-full border rounded px-3 py-2"
                             />
