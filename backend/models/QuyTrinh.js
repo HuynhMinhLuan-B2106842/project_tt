@@ -6,12 +6,9 @@ const quyTrinhSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  maBenhNhan: {
-    type: String,
-    required: true,
-  },
-  tenBenhNhan: {
-    type: String,
+  lanKhamId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'LanKham',
     required: true,
   },
   ngayBatDau: {
