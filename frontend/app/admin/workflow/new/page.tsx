@@ -11,8 +11,8 @@ import Select from "react-select"; // Import react-select
 
 export default function NewWorkflow() {
   const [patientInfo, setPatientInfo] = useState({ maBenhNhan: "", tenBenhNhan: "" });
-  const [danhSachSoDo, setDanhSachSoDo] = useState<any[]>([]);
-  const [selectedDiagram, setSelectedDiagram] = useState<any>(null); // Thay vì diagramId
+  const [danhSachSoDo, setDanhSachSoDo] = useState<unknown[]>([]);
+  const [selectedDiagram, setSelectedDiagram] = useState<unknown>(null); // Thay vì diagramId
   const router = useRouter();
 
   useEffect(() => {
