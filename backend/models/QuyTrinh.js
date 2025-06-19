@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Buoc = require('./Buoc');
+const LanKham = require('./lankham.model')
 
 const quyTrinhSchema = new mongoose.Schema({
   ten: {
@@ -27,7 +28,7 @@ const quyTrinhSchema = new mongoose.Schema({
   diagramId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Diagram',
-    required: true,
+    required: false,
   },
   cacBuoc: [{
     type: mongoose.Schema.Types.ObjectId,

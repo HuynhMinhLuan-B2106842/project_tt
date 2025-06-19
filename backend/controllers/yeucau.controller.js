@@ -1,5 +1,8 @@
 const Yeucau = require("../models/yeucau.model");
 const Benhnhan = require("../models/benhnhan.model");
+const LanKham = require("../models/lankham.model");
+const QuyTrinh = require("../models/QuyTrinh");
+const Buoc = require("../models/Buoc");
 const guiYeuCauKham = async (req, res) => {
     try {
         const taiKhoanId = req.user.id;
@@ -48,34 +51,53 @@ const layChiTietYeuCau = async (req, res) => {
 
 const duyetYeuCau = async (req, res) => {
     const LanKham = require("../models/lankham.model"); // nhớ thêm dòng này!
-    try {
-        const id = req.params.id;
-        const yeuCau = await Yeucau.findById(id).populate('ma_BN');
+   try {
+    const id = req.params.id;
+    const yeuCau = await Yeucau.findById(id).populate('ma_BN');
 
-        if (!yeuCau) {
-            return res.status(404).json({ message: 'Không tìm thấy yêu cầu' });
-        }
-
-        yeuCau.trang_thai_YC = 'da_duyet';
-        await yeuCau.save();
-
-        const maBN = yeuCau.ma_BN?._id || yeuCau.ma_BN;
-        if (!maBN) {
-            return res.status(400).json({ message: 'Thiếu thông tin bệnh nhân để tạo lần khám' });
-        }
-
-        await LanKham.create({
-            ma_BN: maBN,
-            ngay_kham: new Date(),
-            trang_thai: 'dang_kham',
-            ghi_chu: ''
-        });
-
-        return res.status(200).json({ message: 'Duyệt và tạo lần khám thành công' });
-    } catch (error) {
-        console.error("❌ Lỗi trong duyetYeuCau:", error);
-        return res.status(500).json({ message: 'Lỗi server khi duyệt yêu cầu' });
+    if (!yeuCau) {
+      return res.status(404).json({ message: 'Không tìm thấy yêu cầu' });
     }
+
+    yeuCau.trang_thai_YC = 'da_duyet';
+    await yeuCau.save();
+
+    const maBN = yeuCau.ma_BN?._id;
+    if (!maBN) {
+      return res.status(400).json({ message: 'Thiếu thông tin bệnh nhân để tạo lần khám' });
+    }
+
+    // 1. Tạo lần khám
+    const lanKhamMoi = await LanKham.create({
+      maBenhNhan: maBN,
+      ngay_kham: new Date(),
+      trang_thai: 'dang_kham',
+      ghi_chu: ''
+    });
+
+    // 2. Tạo một bước duy nhất (VD: Tiếp nhận)
+    const buocDau = await Buoc.create({
+      maBuoc: "tiep_nhan",
+      tenBuoc: "Tiếp nhận",
+      trangThai: "dang_xu_ly"
+    });
+
+    // 3. Tạo quy trình (chưa có sơ đồ)
+    await QuyTrinh.create({
+      ten: `Quy trình khám ${yeuCau.chuyen_khoa}`,
+      maBenhNhan: maBN,
+      lanKhamId: lanKhamMoi._id,
+      cacBuoc: [buocDau._id],
+      buocHienTai: buocDau.maBuoc,
+      trangThai: "dang_xu_ly"
+      // Không cần diagramId lúc này
+    });
+
+    return res.status(200).json({ message: 'Duyệt yêu cầu và tạo quy trình thành công' });
+  } catch (error) {
+    console.error("❌ Lỗi trong duyetYeuCau:", error);
+    return res.status(500).json({ message: 'Lỗi server khi duyệt yêu cầu', error: error.message });
+  }
 };
 
   

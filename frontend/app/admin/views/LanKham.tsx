@@ -61,6 +61,7 @@ export default function LanKhamPage() {
 
             const lkRes = await layDanhSachLanKham();
             setDsLanKham(lkRes);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             alert('Tạo lần khám thất bại');
         }
