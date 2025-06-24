@@ -15,4 +15,4 @@ const LanKhamSchema = new mongoose.Schema({
   ghi_chu: String
 });
 
-module.exports = mongoose.model('LanKham', LanKhamSchema); // <- PHẢI có dòng này
+module.exports = mongoose.model('LanKham', LanKhamSchema);

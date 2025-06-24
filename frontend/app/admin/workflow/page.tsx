@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { Plus, FileText, User, Clock } from "lucide-react";
+import { ArrowBigLeft, FileText, User, Clock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/hooks/use-toast";
@@ -31,7 +31,14 @@ interface LanKham {
   _id: string;
   maBenhNhan: BenhNhan;
 }
+interface Diagram {
+  _id: string;
+  name: string;
+  xml?: string;
+}
+
 interface QuyTrinh {
+  diagramId: Diagram | string;
   _id: string;
   ten: string;
   lanKhamId: LanKham;
@@ -41,12 +48,9 @@ interface QuyTrinh {
   cacBuoc: Buoc[];
 }
 
-
 export default function WorkflowManagement() {
   const [quyTrinhs, setQuyTrinhs] = useState<QuyTrinh[]>([]);
   const router = useRouter();
- 
-
 
   useEffect(() => {
     const layDanhSachQuyTrinh = async () => {
@@ -80,82 +84,140 @@ export default function WorkflowManagement() {
     }
   };
 
-  const handleCreateNew = () => {
-    router.push("/admin/workflow/new");
+  const handleBack = () => {
+    router.push("/admin");
   };
 
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Quản lý quy trình khám bệnh</h1>
-        <Button onClick={handleCreateNew}>
-          <Plus className="mr-2 h-4 w-4" />
-          Tạo quy trình mới
+        <Button onClick={handleBack}>
+          <ArrowBigLeft className="mr-2 h-8 w-8" />
+          <h1 className="text font-bold">Quay lại</h1>
         </Button>
       </div>
 
       <div className="grid gap-6">
         {quyTrinhs.map((quyTrinh) => {
-  const benhNhan = quyTrinh.lanKhamId?.maBenhNhan;
+          const benhNhan = quyTrinh.lanKhamId?.maBenhNhan;
 
-  return (
-    <Card key={quyTrinh._id} className="overflow-hidden">
-      <CardHeader className="bg-gray-50 border-b">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">{quyTrinh.ten}</CardTitle>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(quyTrinh.trangThai)}`}>
-            {quyTrinh.trangThai === "dang_xu_ly" ? "Đang xử lý" : "Hoàn thành"}
-          </span>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="flex items-center">
-            <User className="h-5 w-5 text-gray-500 mr-2" />
-            <div>
-              <p className="text-sm font-medium">Bệnh nhân</p>
-              <p className="text-sm text-gray-600">
-                {benhNhan?.ho_ten} ({benhNhan?._id})
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <Clock className="h-5 w-5 text-gray-500 mr-2" />
-            <div>
-              <p className="text-sm font-medium">Ngày bắt đầu</p>
-              <p className="text-sm text-gray-600">
-                {new Date(quyTrinh.ngayBatDau).toLocaleDateString("vi-VN", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <FileText className="h-5 w-5 text-gray-500 mr-2" />
-            <div>
-              <p className="text-sm font-medium">Bước hiện tại</p>
-              <p className="text-sm text-gray-600">
-                {quyTrinh.buocHienTai === "completed"
-                  ? "Hoàn thành"
-                  : quyTrinh.cacBuoc.find((b) => b.maBuoc === quyTrinh.buocHienTai)?.tenBuoc || "Hoàn thành"}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Link href={`/admin/workflow/${quyTrinh._id}`}>
-            <Button variant="outline">Xem chi tiết</Button>
-          </Link>
-        </div>
-      </CardContent>
-    </Card>
-  );
-})}
+          return (
+            <Card key={quyTrinh._id} className="overflow-hidden">
+              <CardHeader className="bg-gray-50 border-b">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-lg">{quyTrinh.ten}</CardTitle>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(
+                      quyTrinh.trangThai
+                    )}`}
+                  >
+                    {quyTrinh.trangThai === "dang_xu_ly"
+                      ? "Đang xử lý"
+                      : "Hoàn thành"}
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid md:grid-cols-4 gap-4 items-start">
+                  {/* Cột thông tin (chiếm 3/4) */}
+                  <div className="col-span-3 grid md:grid-cols-3 gap-4">
+                    <div className="flex items-center">
+                      <User className="h-5 w-5 text-gray-1000 mr-2" />
+                      <div>
+                        <p className="text-bg font-medium">Bệnh nhân</p>
+                        <p className="text-sm text-gray-600">
+                          {benhNhan?.ho_ten}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          ({benhNhan?._id})
+                        </p>
+                      </div>
+                    </div>
 
+                    <div className="flex items-center">
+                      <Clock className="h-5 w-5 text-gray-500 mr-2" />
+                      <div>
+                        <p className="text-sm font-medium">Ngày bắt đầu</p>
+                        <p className="text-sm text-gray-600">
+                          {new Date(quyTrinh.ngayBatDau).toLocaleDateString(
+                            "vi-VN",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center">
+                      <FileText className="h-5 w-5 text-gray-500 mr-2" />
+                      <div>
+                        <p className="text-sm font-medium">
+                          {typeof quyTrinh.diagramId === "object" &&
+                          "name" in quyTrinh.diagramId
+                            ? quyTrinh.diagramId.name
+                            : "Chưa gắn quy trình"}
+                        </p>
+                        {typeof quyTrinh.diagramId === "object" &&
+                          "name" in quyTrinh.diagramId && (
+                            <p className="text-sm text-gray-600">
+                              {quyTrinh.buocHienTai === "completed"
+                                ? "Hoàn thành"
+                                : quyTrinh.cacBuoc.find(
+                                    (b) => b.maBuoc === quyTrinh.buocHienTai
+                                  )?.tenBuoc || "Hoàn thành"}
+                            </p>
+                          )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-end justify-center gap-2  ">
+                    <Button
+                      onClick={() => {
+                        if (quyTrinh._id) {
+                          const diagramId =
+                            typeof quyTrinh.diagramId === "object" &&
+                            quyTrinh.diagramId?._id
+                              ? `&diagramId=${quyTrinh.diagramId._id}`
+                              : "";
+
+                          router.push(
+                            `/admin/workflow/new?quyTrinhId=${quyTrinh._id}${diagramId}`
+                          );
+                        } else {
+                          toast({
+                            title: "Thiếu thông tin",
+                            description: "Không thể gán quy trình vì thiếu ID",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      variant="outline"
+                      className="w-40 hover:bg-gray-300 hover:text-gray-900"
+                    >
+                      Gán quy trình
+                    </Button>
+
+                    <Link href={`/admin/workflow/${quyTrinh._id}`}>
+                      <Button
+                        variant="outline"
+                        className="w-40 hover:bg-gray-300 hover:text-gray-900"
+                      >
+                        Xem chi tiết
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
