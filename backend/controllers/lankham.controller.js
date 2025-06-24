@@ -45,7 +45,7 @@ const layDanhSachLanKham = async (req, res) => {
 
 const layChiTietLanKham = async (req, res) => {
     try {
-        const lankham = await Lankham.findById(req.params.id).populate("ma_BN");
+        const lankham = await Lankham.findById(req.params.id).populate("maBenhNhan");
         if (!lankham) {
             return res.status(404).json({ message: "Không tìm thấy lần khám" });
         }
