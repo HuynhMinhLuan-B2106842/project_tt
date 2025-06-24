@@ -7,33 +7,35 @@ const parser = new xml2js.Parser();
 
 exports.layTatCaQuyTrinh = async (req, res) => {
   try {
-   const danhSachQuyTrinh = await QuyTrinh.find()
-  .populate({
-    path: "lanKhamId",
-    populate: {
-      path: "maBenhNhan",
-      model: "Benhnhan",
-      select: "ho_ten _id",
-    },
-  })
-  .populate("cacBuoc")
-  .populate("diagramId", "name xml")
-  .select("ten lanKhamId ngayBatDau trangThai buocHienTai diagramId ngayCapNhat");
+    const danhSachQuyTrinh = await QuyTrinh.find()
+      .populate({
+        path: "lanKhamId",
+        populate: {
+          path: "maBenhNhan",
+          model: "Benhnhan",
+          select: "ho_ten _id",
+        },
+      })
+      .populate("cacBuoc")
+      .populate("diagramId", "name xml")
+      .select(
+        "ten lanKhamId ngayBatDau trangThai buocHienTai diagramId ngayCapNhat"
+      );
 
     const response = danhSachQuyTrinh.map((qt) => {
-  const benhNhan = qt.lankhamId?.maBenhNhan;
-  return {
-    _id: qt._id,
-    ten: qt.ten,
-    ngayBatDau: qt.ngayBatDau,
-    trangThai: qt.trangThai,
-    buocHienTai: qt.buocHienTai,
-    diagramId: qt.diagramId,
-    cacBuoc: qt.cacBuoc,
-    maBenhNhan: benhNhan?._id,
-    tenBenhNhan: benhNhan?.ho_ten || "Không rõ",
-  };
-});
+      const benhNhan = qt.lanKhamId?.maBenhNhan;
+      return {
+        _id: qt._id,
+        ten: qt.ten,
+        ngayBatDau: qt.ngayBatDau,
+        trangThai: qt.trangThai,
+        buocHienTai: qt.buocHienTai,
+        diagramId: qt.diagramId,
+        cacBuoc: qt.cacBuoc,
+        maBenhNhan: benhNhan?._id,
+        tenBenhNhan: benhNhan?.ho_ten || "Không rõ",
+      };
+    });
     res.json(danhSachQuyTrinh);
   } catch (err) {
     res
@@ -45,18 +47,24 @@ exports.layTatCaQuyTrinh = async (req, res) => {
 exports.layQuyTrinhTheoId = async (req, res) => {
   try {
     const quyTrinh = await QuyTrinh.findById(req.params.id)
+      .populate({
+        path: "lanKhamId",
+        populate: {
+          path: "maBenhNhan",
+          model: "Benhnhan",
+          select: "ho_ten _id",
+        },
+      })
       .populate("cacBuoc")
       .populate("diagramId", "name xml")
       .select(
-  "ten maBenhNhan ngayBatDau trangThai buocHienTai diagramId cacBuoc ngayCapNhat"
-)
-.populate({
-  path: "maBenhNhan",
-  select: "ho_ten",
-});
+        "ten lanKhamId ngayBatDau trangThai buocHienTai diagramId cacBuoc ngayCapNhat"
+      );
+
     if (!quyTrinh) {
       return res.status(404).json({ message: "Không tìm thấy quy trình" });
     }
+
     res.json(quyTrinh);
   } catch (err) {
     res
@@ -65,13 +73,85 @@ exports.layQuyTrinhTheoId = async (req, res) => {
   }
 };
 
+exports.capNhatDiagramQuyTrinh = async (req, res) => {
+  try {
+    const { diagramId } = req.body;
+    const { id: quyTrinhId } = req.params;
+
+    if (!diagramId) {
+      return res.status(400).json({ message: "Thiếu diagramId" });
+    }
+
+    const quyTrinh = await QuyTrinh.findById(quyTrinhId);
+    if (!quyTrinh) {
+      return res.status(404).json({ message: "Không tìm thấy quy trình" });
+    }
+
+    const soDo = await Diagram.findById(diagramId);
+    if (!soDo) {
+      return res.status(404).json({ message: "Sơ đồ BPMN không tồn tại" });
+    }
+
+    // Parse XML để lấy các bước
+    const steps = await new Promise((resolve, reject) => {
+      parser.parseString(soDo.xml, (err, result) => {
+        if (err) reject(err);
+        const processes = result["bpmn:definitions"]["bpmn:process"] || [];
+        const stepsArray = [];
+
+        processes.forEach((process) => {
+          const tasks = process["bpmn:task"] || [];
+          tasks.forEach((task) => {
+            const stepName = task["$"].name || `Task_${tasks.indexOf(task) + 1}`;
+            const stepId = task["$"].id;
+            stepsArray.push({ maBuoc: stepId, tenBuoc: stepName });
+          });
+        });
+
+        resolve(stepsArray);
+      });
+    });
+
+    // Xóa các bước cũ
+    await Buoc.deleteMany({ _id: { $in: quyTrinh.cacBuoc } });
+
+    // Tạo lại danh sách bước mới
+    const danhSachBuoc = await Buoc.insertMany(
+      steps.map((step, index) => ({
+        maBuoc: step.maBuoc,
+        tenBuoc: step.tenBuoc,
+        trangThai: index === 0 ? "dang_xu_ly" : "cho_xu_ly",
+      }))
+    );
+
+    quyTrinh.diagramId = diagramId;
+    quyTrinh.cacBuoc = danhSachBuoc.map((b) => b._id);
+    quyTrinh.buocHienTai = steps.length > 0 ? steps[0].maBuoc : null;
+    quyTrinh.trangThai = steps.length > 0 ? "dang_xu_ly" : "cho_xu_ly";
+    quyTrinh.ngayCapNhat = new Date();
+
+    await quyTrinh.save();
+
+    res.json({
+      message: "Cập nhật sơ đồ và các bước thành công",
+      quyTrinh,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Lỗi khi cập nhật sơ đồ và các bước",
+      error: err.message,
+    });
+  }
+};
+
+
 exports.taoQuyTrinhMoi = async (req, res) => {
   try {
-    const { ten, maBenhNhan, diagramId } = req.body;
+    const { ten, lanKhamId, diagramId } = req.body;
 
-if (!ten || !maBenhNhan || !diagramId) {
-  return res.status(400).json({ message: "Thông tin không đầy đủ" });
-}
+    if (!ten || !lanKhamId || !diagramId) {
+      return res.status(400).json({ message: "Thông tin không đầy đủ" });
+    }
 
     // Kiểm tra xem diagramId có tồn tại không
     const soDo = await Diagram.findById(diagramId);
@@ -112,11 +192,12 @@ if (!ten || !maBenhNhan || !diagramId) {
 
     const quyTrinh = new QuyTrinh({
       ten,
-      maBenhNhan,
+      lanKhamId,
       diagramId,
       cacBuoc: danhSachBuoc.map((buoc) => buoc._id),
       buocHienTai: steps.length > 0 ? steps[0].maBuoc : null,
       trangThai: steps.length > 0 ? "dang_xu_ly" : "cho_xu_ly",
+      ngayBatDau: new Date(),
     });
 
     await quyTrinh.save();
@@ -209,12 +290,12 @@ exports.capNhatQuyTrinh = async (req, res) => {
       .populate("cacBuoc")
       .populate("diagramId", "name xml")
       .select(
-  "ten maBenhNhan ngayBatDau trangThai buocHienTai diagramId cacBuoc ngayCapNhat"
-)
-.populate({
-  path: "maBenhNhan",
-  select: "ho_ten"
-});
+        "ten maBenhNhan ngayBatDau trangThai buocHienTai diagramId cacBuoc ngayCapNhat"
+      )
+      .populate({
+        path: "maBenhNhan",
+        select: "ho_ten",
+      });
     res.json({
       message: "Cập nhật quy trình thành công",
       quyTrinh: quyTrinhCapNhat,

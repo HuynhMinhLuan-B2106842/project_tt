@@ -17,13 +17,15 @@ const stepStatuses = [
 ];
 
 export default function WorkflowDetail() {
+  
   const params = useParams();
   const router = useRouter();
   const [quyTrinh, setQuyTrinh] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<any>(null);
-
+  const maBenhNhan = quyTrinh?.maBenhNhan;
+  const tenBenhNhan = quyTrinh?.tenBenhNhan;
   useEffect(() => {
     const layQuyTrinh = async () => {
       try {
@@ -288,7 +290,7 @@ export default function WorkflowDetail() {
                   <div>
                     <p className="text-sm font-medium">Bệnh nhân</p>
                     <p className="text-sm text-gray-600">
-                      {quyTrinh.tenBenhNhan} ({quyTrinh.maBenhNhan})
+                        {tenBenhNhan} ({maBenhNhan})
                     </p>
                   </div>
                 </div>
