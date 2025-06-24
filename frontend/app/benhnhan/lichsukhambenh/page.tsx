@@ -27,6 +27,7 @@ export default function LichSuKhamPage() {
         const res = await fetch('http://localhost:9000/api/lankham/benhnhan/me', {
           headers: {
             Authorization: `Bearer ${token}`,
+            
           },
         });
 
@@ -34,6 +35,7 @@ export default function LichSuKhamPage() {
 
         const data: LanKham[] = await res.json();
         setLanKhams(data);
+        console.log("✅ Dữ liệu lấy về:", data); 
       } catch (err) {
         console.error('Lỗi khi gọi API:', err);
       } finally {
