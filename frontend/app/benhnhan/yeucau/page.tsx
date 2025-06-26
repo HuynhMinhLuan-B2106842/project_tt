@@ -23,7 +23,16 @@ export default function YeuCauKham() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [canUpdateInfo, setCanUpdateInfo] = useState(false);
   const [benhNhanId, setBenhNhanId] = useState<string | null>(null);
-
+  const chuyenKhoaOptions = [
+    "Nội tổng quát",
+    "Ngoại khoa",
+    "Tai - Mũi - Họng",
+    "Răng - Hàm - Mặt",
+    "Da liễu",
+    "Sản phụ khoa",
+    "Nhi khoa",
+  ];
+    
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -142,13 +151,18 @@ export default function YeuCauKham() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Chuyên khoa:
             </label>
-            <input
-              type="text"
+            <select
               value={chuyenKhoa}
               onChange={(e) => setChuyenKhoa(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
+            >
+              <option value="">-- Chọn chuyên khoa --</option>
+              {chuyenKhoaOptions.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+
           </div>
 
           <div>

@@ -3,6 +3,16 @@
 import { useEffect, useState } from 'react';
 import Header from '@/app/components/Header';
 import Footer from '@/app/footer';
+import Link from 'next/link';
+import { Button } from '@/app/components/ui/button';
+import { ArrowRight } from "lucide-react";
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/app/components/ui/card';
 
 interface LanKham {
   _id: string;
@@ -15,27 +25,56 @@ interface LanKham {
   };
 }
 
+interface QuyTrinh {
+  _id: string;
+  ten: string;
+  buocHienTai: string;
+}
+
 export default function LichSuKhamPage() {
   const [lanKhams, setLanKhams] = useState<LanKham[]>([]);
   const [loading, setLoading] = useState(true);
+  const [quyTrinhMap, setQuyTrinhMap] = useState<Record<string, QuyTrinh | null>>({});
 
+  const fetchQuyTrinhForLanKhams = async (
+    lanKhams: LanKham[],
+    setQuyTrinhMap: React.Dispatch<React.SetStateAction<Record<string, QuyTrinh | null>>>
+  ) => {
+    const map: Record<string, QuyTrinh | null> = {};
+
+    await Promise.all(
+      lanKhams.map(async (lk) => {
+        try {
+          const res = await fetch(`http://localhost:9000/api/quytrinh/by-lankham/${lk._id}`);
+          if (res.ok) {
+            const quyTrinh: QuyTrinh = await res.json();
+            map[lk._id] = quyTrinh;
+          } else {
+            map[lk._id] = null;
+          }
+        } catch (err) {
+          console.error(`❌ Lỗi khi lấy quy trình cho lần khám ${lk._id}:`, err);
+          map[lk._id] = null;
+        }
+      })
+    );
+
+    setQuyTrinhMap(map);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
         const res = await fetch('http://localhost:9000/api/lankham/benhnhan/me', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!res.ok) throw new Error('Không thể lấy dữ liệu');
-
+        if (!res.ok) throw new Error('Không thể lấy dữ liệu lần khám');
         const data: LanKham[] = await res.json();
         setLanKhams(data);
-        console.log("✅ Dữ liệu lấy về:", data); 
+
+        await fetchQuyTrinhForLanKhams(data, setQuyTrinhMap);
       } catch (err) {
         console.error('Lỗi khi gọi API:', err);
       } finally {
@@ -45,7 +84,6 @@ export default function LichSuKhamPage() {
 
     fetchData();
   }, []);
-  
 
   const formatTrangThai = (trangThai: LanKham['trang_thai']) => {
     switch (trangThai) {
@@ -68,37 +106,55 @@ export default function LichSuKhamPage() {
   return (
     <>
       <Header />
-      <main className="max-w-4xl mx-auto p-6 min-h-[80vh]">
-        <h1 className="text-2xl font-bold mb-4 text-center">Lịch sử khám bệnh</h1>
+      <main className="min-h-[80vh] bg-gradient-to-b from-blue-50 to-white py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold text-center text-blue-900 mb-10">
+            Lịch sử khám bệnh của bạn
+          </h1>
 
-        {loading ? (
-          <p className="text-center">Đang tải dữ liệu...</p>
-        ) : lanKhams.length === 0 ? (
-          <p className="text-center">Không có lần khám nào.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border border-gray-300 shadow-md rounded-md overflow-hidden">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-2">STT</th>
-                  <th className="border p-2">Ngày khám</th>
-                  <th className="border p-2">Trạng thái</th>
-                  <th className="border p-2">Ghi chú</th>
-                </tr>
-              </thead>
-              <tbody>
-                {lanKhams.map((item, idx) => (
-                  <tr key={item._id} className="text-center hover:bg-gray-50">
-                    <td className="border p-2">{idx + 1}</td>
-                    <td className="border p-2">{formatDate(item.ngay_kham)}</td>
-                    <td className="border p-2">{formatTrangThai(item.trang_thai)}</td>
-                    <td className="border p-2">{item.ghi_chu || 'Không có'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+          {loading ? (
+            <p className="text-center">Đang tải dữ liệu...</p>
+          ) : lanKhams.length === 0 ? (
+            <p className="text-center">Không có lần khám nào.</p>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6">
+              {lanKhams.map((item, idx) => (
+                <Card key={item._id} className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="text-blue-800">
+                      Lần khám {idx + 1}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <p>
+                      <strong>Ngày khám:</strong> {formatDate(item.ngay_kham)}
+                    </p>
+                    <p>
+                      <strong>Trạng thái:</strong> {formatTrangThai(item.trang_thai)}
+                    </p>
+                    <p>
+                      <strong>Ghi chú:</strong> {item.ghi_chu || 'Không có'}
+                    </p>
+                    <p>
+                      <strong>Quy trình:</strong>{' '}
+                      {quyTrinhMap[item._id] ? (
+                        <Link
+                          href={`/quytrinh/${quyTrinhMap[item._id]!._id}`}
+                          className="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                        >
+                          Xem quy trình
+                          <ArrowRight className="ml-1 h-4 w-4" />
+                      </Link>
+                      ) : (
+                        <span className="text-gray-400 italic">Chưa có</span>
+                      )}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
       </main>
       <Footer />
     </>

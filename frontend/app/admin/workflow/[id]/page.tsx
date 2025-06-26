@@ -16,6 +16,7 @@ const stepStatuses = [
   { value: "bo_qua", label: "Bỏ qua" },
 ];
 
+
 export default function WorkflowDetail() {
   
   const params = useParams();
@@ -26,6 +27,7 @@ export default function WorkflowDetail() {
   const modelerRef = useRef<any>(null);
   const maBenhNhan = quyTrinh?.maBenhNhan;
   const tenBenhNhan = quyTrinh?.tenBenhNhan;
+  const benhNhan = quyTrinh?.lanKhamId?.maBenhNhan;
   useEffect(() => {
     const layQuyTrinh = async () => {
       try {
@@ -290,7 +292,10 @@ export default function WorkflowDetail() {
                   <div>
                     <p className="text-sm font-medium">Bệnh nhân</p>
                     <p className="text-sm text-gray-600">
-                        {tenBenhNhan} ({maBenhNhan})
+                      {benhNhan?.ho_ten} 
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      ({benhNhan?._id})
                     </p>
                   </div>
                 </div>

@@ -72,7 +72,7 @@ const duyetYeuCau = async (req, res) => {
       maBenhNhan: maBN,
       ngay_kham: new Date(),
       trang_thai: 'dang_kham',
-      ghi_chu: ''
+        ghi_chu: `${yeuCau.chuyen_khoa} - ${yeuCau.trieu_chung}`
     });
 
     // 2. Tạo một bước duy nhất (VD: Tiếp nhận)
