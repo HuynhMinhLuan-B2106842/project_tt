@@ -14,6 +14,7 @@ interface TokenPayload {
 }
 
 export default function YeuCauKham() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter();
   const [chuyenKhoa, setChuyenKhoa] = useState("");
   const [trieuChung, setTrieuChung] = useState("");

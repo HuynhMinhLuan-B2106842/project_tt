@@ -36,8 +36,12 @@ export default function Home() {
                 với đội ngũ bác sĩ chuyên nghiệp và trang thiết bị hiện đại.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                  <Link href="/benhnhan/yeucau">Đặt lịch khám ngay</Link> 
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <Link href="/benhnhan/yeucau">Đặt lịch khám ngay</Link>
                 </Button>
                 <Button size="lg" variant="outline">
                   Tìm hiểu thêm
@@ -46,7 +50,7 @@ export default function Home() {
             </div>
             <div className="relative h-[400px]">
               <Image
-                src="/placeholder.svg?height=400&width=600"
+                src="/benhvien.png"
                 alt="Phòng khám đa khoa"
                 fill
                 className="object-cover rounded-lg shadow-lg"
