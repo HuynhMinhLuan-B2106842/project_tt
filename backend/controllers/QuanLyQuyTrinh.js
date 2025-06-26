@@ -4,6 +4,7 @@ const Buoc = require("../models/Buoc");
 const Diagram = require("../models/Diagram.model");
 const xml2js = require("xml2js");
 const parser = new xml2js.Parser();
+const LanKham = require("../models/lankham.model")
 
 exports.layTatCaQuyTrinh = async (req, res) => {
   try {
@@ -213,7 +214,7 @@ exports.capNhatQuyTrinh = async (req, res) => {
   try {
     const {
       ten,
-      maBenhNhan,
+      // maBenhNhan,
       trangThai,
       buocHienTai,
       diagramId,
@@ -226,7 +227,7 @@ exports.capNhatQuyTrinh = async (req, res) => {
     }
 
     if (ten) quyTrinh.ten = ten;
-    if (maBenhNhan) quyTrinh.maBenhNhan = maBenhNhan;
+    // if (maBenhNhan) quyTrinh.maBenhNhan = maBenhNhan;
     if (trangThai) quyTrinh.trangThai = trangThai;
     if (buocHienTai) quyTrinh.buocHienTai = buocHienTai;
     if (diagramId) {
@@ -285,7 +286,11 @@ exports.capNhatQuyTrinh = async (req, res) => {
 
     quyTrinh.ngayCapNhat = Date.now();
     await quyTrinh.save();
-
+    if (quyTrinh.trangThai === "hoan_thanh") {
+      await LanKham.findByIdAndUpdate(quyTrinh.lanKhamId, {
+        trang_thai: "hoan_thanh",
+      });
+    }
     const quyTrinhCapNhat = await QuyTrinh.findById(req.params.id)
       .populate("cacBuoc")
       .populate("diagramId", "name xml")
@@ -293,8 +298,8 @@ exports.capNhatQuyTrinh = async (req, res) => {
         "ten maBenhNhan ngayBatDau trangThai buocHienTai diagramId cacBuoc ngayCapNhat"
       )
       .populate({
-        path: "maBenhNhan",
-        select: "ho_ten",
+        path: "lanKhamId",
+        populate: { path: "maBenhNhan", select: "ho_ten" }
       });
     res.json({
       message: "Cập nhật quy trình thành công",
@@ -333,5 +338,49 @@ exports.layTatCaSoDo = async (req, res) => {
     res
       .status(500)
       .json({ message: "Lỗi khi lấy danh sách sơ đồ", error: err.message });
+  }
+};
+
+
+// exports.layQuyTrinhTheoLanKhamId = async (req, res) => {
+//   try {
+//     const quyTrinh = await QuyTrinh.findOne({ lanKhamId: req.params.lanKhamId })
+//       .populate({
+//         path: "lanKhamId",
+//         populate: {
+//           path: "maBenhNhan",
+//           model: "Benhnhan",
+//           select: "ho_ten _id",
+//         },
+//       })
+//       .populate("cacBuoc")
+//       .populate("diagramId", "name xml")
+//       .select("ten lanKhamId ngayBatDau trangThai buocHienTai diagramId cacBuoc ngayCapNhat");
+
+//     if (!quyTrinh) {
+//       return res.status(404).json({ message: "Không tìm thấy quy trình cho lần khám này" });
+//     }
+
+//     res.json(quyTrinh);
+//   } catch (err) {
+//     res.status(500).json({ message: "Lỗi khi lấy quy trình", error: err.message });
+//   }
+// };
+
+
+exports.layQuyTrinhTheoLanKhamId = async (req, res) => {
+  try {
+    const quyTrinh = await QuyTrinh.findOne({ lanKhamId: req.params.lanKhamId })
+      .populate("cacBuoc") // nếu các bước là ObjectId, nếu không thì có thể bỏ
+      .populate("diagramId", "name xml")
+      .select("ten buocHienTai diagramId trangThai cacBuoc");
+
+    if (!quyTrinh) {
+      return res.status(404).json({ message: "Không tìm thấy quy trình cho lần khám này" });
+    }
+
+    res.json(quyTrinh);
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server khi lấy quy trình", error: err.message });
   }
 };

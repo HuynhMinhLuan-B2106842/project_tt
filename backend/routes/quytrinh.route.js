@@ -9,4 +9,5 @@ router.put('/:id', quanLyQuyTrinh.capNhatQuyTrinh);
 router.delete('/:id', quanLyQuyTrinh.xoaQuyTrinh);
 router.get('/sodo/sodo', quanLyQuyTrinh.layTatCaSoDo);
 router.put("/capnhat-sodo/:id", quanLyQuyTrinh.capNhatDiagramQuyTrinh);
+router.get('/by-lankham/:lanKhamId', quanLyQuyTrinh.layQuyTrinhTheoLanKhamId);
 module.exports = router;

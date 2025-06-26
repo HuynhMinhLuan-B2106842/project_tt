@@ -1,5 +1,6 @@
 const Lankham = require("../models/lankham.model");
 const Yeucau = require("../models/yeucau.model");
+const BenhNhan = require('../models/benhnhan.model');
 
 const taoLanKham = async (req, res) => {
     try {
@@ -89,15 +90,32 @@ const xoaLanKham = async (req, res) => {
         res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
     }
   };
-const layLanKhamCuaToi = async (req, res) => {
-    try {
-        const benhNhanId = req.user.id; // Lấy từ token đã giải mã
+// const layLanKhamCuaToi = async (req, res) => {
+//     try {
+//         const benhNhanId = req.user.id || req.user._id;
 
-        const danhSach = await Lankham.find({ ma_BN: benhNhanId }).populate("ma_BN");
-        res.status(200).json(danhSach);
-    } catch (err) {
-        res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
+//         const danhSach = await Lankham.find({ ma_BN: benhNhanId }).populate("ma_BN");
+//         res.status(200).json(danhSach);
+//     } catch (err) {
+//         res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
+//     }
+//     console.log("Thông tin user từ token:", req.user);
+// };
+const layLanKhamCuaToi = async (req, res) => {
+  try {
+    const taiKhoanId = req.user.id; // từ token decode ra
+    const benhNhan = await BenhNhan.findOne({ tai_khoan_id: taiKhoanId });
+    
+
+    if (!benhNhan) {
+      return res.status(404).json({ message: "Không tìm thấy bệnh nhân tương ứng với tài khoản." });
     }
+    const danhSachLanKham = await Lankham.find({ maBenhNhan: benhNhan._id });
+    return res.json(danhSachLanKham);
+  } catch (error) {
+    console.error("❌ Lỗi tại layLanKhamCuaToi:", error);
+    return res.status(500).json({ message: "Đã xảy ra lỗi server.", error: error.message });
+  }
 };
 
 module.exports = {
