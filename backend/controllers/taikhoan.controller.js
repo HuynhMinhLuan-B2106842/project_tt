@@ -97,3 +97,37 @@ exports.xoaTaiKhoan = async(req, res) => {
         res.status(500).json({error: err.message});
     }
 }
+
+exports.doiMatKhau = async (req, res) => {
+  try {
+    const { mat_khau_cu, mat_khau_moi, mat_khau_moi_laplai } = req.body;
+
+    if (!mat_khau_cu || !mat_khau_moi || !mat_khau_moi_laplai) {
+      return res.status(400).json({ error: "Vui lòng nhập đầy đủ thông tin" });
+    }
+
+    if (mat_khau_moi !== mat_khau_moi_laplai) {
+      return res.status(400).json({ error: "Mật khẩu mới không khớp" });
+    }
+
+    const taiKhoanId = req.user.id; // Lấy từ middleware xác thực JWT
+    const taiKhoan = await TaiKhoan.findById(taiKhoanId);
+
+    if (!taiKhoan) {
+      return res.status(404).json({ error: "Không tìm thấy tài khoản" });
+    }
+
+    const match = await bcrypt.compare(mat_khau_cu, taiKhoan.mat_khau);
+    if (!match) {
+      return res.status(400).json({ error: "Mật khẩu cũ không đúng" });
+    }
+
+    const hashed = await bcrypt.hash(mat_khau_moi, 10);
+    taiKhoan.mat_khau = hashed;
+    await taiKhoan.save();
+
+    res.json({ message: "Đổi mật khẩu thành công" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

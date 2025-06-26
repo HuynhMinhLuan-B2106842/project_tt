@@ -46,6 +46,9 @@ export default function Header() {
     } else if (e.target.value === 'profile') {
       window.location.href = '/benhnhan/xemhoso';
     }
+    else if (e.target.value === 'doimk') {
+      window.location.href = '/benhnhan/doimatkhau';
+    }
   };
 
   return (
@@ -115,6 +118,7 @@ export default function Header() {
                 {user.vai_tro === "admin" && (
                   <option value="admin">Quản lý</option>
                 )}
+                <option value="doimk">Đổi mật khẩu</option>
                 <option value="logout">Đăng xuất</option>
               </select>
             </div>

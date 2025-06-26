@@ -8,6 +8,41 @@ const {
     xoaTaiKhoan,
     layThongTinTaiKhoan,
 } = require("../controllers/taikhoan.controller");
+const auth = require("../middleware/auth"); // Middleware kiểm tra token
+const { doiMatKhau } = require("../controllers/taikhoan.controller");
+/**
+ * @swagger
+ * /api/taikhoan/doimatkhau:
+ *   put:
+ *     summary: Đổi mật khẩu tài khoản hiện tại (đăng nhập mới dùng được)
+ *     tags: [Taikhoan]
+ *     security:
+ *       - bearerAuth: []  # Phải có token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [mat_khau_cu, mat_khau_moi, mat_khau_moi_laplai]
+ *             properties:
+ *               mat_khau_cu:
+ *                 type: string
+ *               mat_khau_moi:
+ *                 type: string
+ *               mat_khau_moi_laplai:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Đổi mật khẩu thành công
+ *       400:
+ *         description: Lỗi xác thực mật khẩu
+ *       403:
+ *         description: Token không hợp lệ
+ *       500:
+ *         description: Lỗi máy chủ
+ */
+router.put("/doimatkhau", auth, doiMatKhau);
 
 /**
  * @swagger
