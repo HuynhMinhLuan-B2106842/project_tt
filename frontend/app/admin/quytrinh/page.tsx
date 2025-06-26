@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { Button } from "@/app/components/ui/button"
 import { Card } from "@/app/components/ui/card"
 import { toast } from "@/app/hooks/use-toast"
+import { Home, Link } from "lucide-react"
 
 export default function BpmnViewer() {
   const containerRef = useRef(null)

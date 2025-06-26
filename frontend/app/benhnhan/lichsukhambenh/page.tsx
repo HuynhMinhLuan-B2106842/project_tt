@@ -1,10 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Header from '@/app/components/Header';
-import Footer from '@/app/footer';
-import Link from 'next/link';
-import { Button } from '@/app/components/ui/button';
+import { useEffect, useState } from "react";
+import Header from "@/app/components/Header";
+import Footer from "@/app/footer";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import {
@@ -12,12 +11,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/app/components/ui/card';
+} from "@/app/components/ui/card";
 
 interface LanKham {
   _id: string;
   ngay_kham: string;
-  trang_thai: 'dang_kham' | 'hoan_thanh' | 'huy';
+  trang_thai: "dang_kham" | "hoan_thanh" | "huy";
   ghi_chu?: string;
   ma_BN: {
     _id: string;
@@ -34,18 +33,24 @@ interface QuyTrinh {
 export default function LichSuKhamPage() {
   const [lanKhams, setLanKhams] = useState<LanKham[]>([]);
   const [loading, setLoading] = useState(true);
-  const [quyTrinhMap, setQuyTrinhMap] = useState<Record<string, QuyTrinh | null>>({});
+  const [quyTrinhMap, setQuyTrinhMap] = useState<
+    Record<string, QuyTrinh | null>
+  >({});
 
   const fetchQuyTrinhForLanKhams = async (
     lanKhams: LanKham[],
-    setQuyTrinhMap: React.Dispatch<React.SetStateAction<Record<string, QuyTrinh | null>>>
+    setQuyTrinhMap: React.Dispatch<
+      React.SetStateAction<Record<string, QuyTrinh | null>>
+    >
   ) => {
     const map: Record<string, QuyTrinh | null> = {};
 
     await Promise.all(
       lanKhams.map(async (lk) => {
         try {
-          const res = await fetch(`http://localhost:9000/api/quytrinh/by-lankham/${lk._id}`);
+          const res = await fetch(
+            `http://localhost:9000/api/quytrinh/by-lankham/${lk._id}`
+          );
           if (res.ok) {
             const quyTrinh: QuyTrinh = await res.json();
             map[lk._id] = quyTrinh;
@@ -53,7 +58,10 @@ export default function LichSuKhamPage() {
             map[lk._id] = null;
           }
         } catch (err) {
-          console.error(`❌ Lỗi khi lấy quy trình cho lần khám ${lk._id}:`, err);
+          console.error(
+            `❌ Lỗi khi lấy quy trình cho lần khám ${lk._id}:`,
+            err
+          );
           map[lk._id] = null;
         }
       })
@@ -65,18 +73,21 @@ export default function LichSuKhamPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:9000/api/lankham/benhnhan/me', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const token = localStorage.getItem("token");
+        const res = await fetch(
+          "http://localhost:9000/api/lankham/benhnhan/me",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-        if (!res.ok) throw new Error('Không thể lấy dữ liệu lần khám');
+        if (!res.ok) throw new Error("Không thể lấy dữ liệu lần khám");
         const data: LanKham[] = await res.json();
         setLanKhams(data);
 
         await fetchQuyTrinhForLanKhams(data, setQuyTrinhMap);
       } catch (err) {
-        console.error('Lỗi khi gọi API:', err);
+        console.error("Lỗi khi gọi API:", err);
       } finally {
         setLoading(false);
       }
@@ -85,14 +96,14 @@ export default function LichSuKhamPage() {
     fetchData();
   }, []);
 
-  const formatTrangThai = (trangThai: LanKham['trang_thai']) => {
+  const formatTrangThai = (trangThai: LanKham["trang_thai"]) => {
     switch (trangThai) {
-      case 'dang_kham':
-        return 'Đang khám';
-      case 'hoan_thanh':
-        return 'Hoàn thành';
-      case 'huy':
-        return 'Đã huỷ';
+      case "dang_kham":
+        return "Đang khám";
+      case "hoan_thanh":
+        return "Hoàn thành";
+      case "huy":
+        return "Đã huỷ";
       default:
         return trangThai;
     }
@@ -100,7 +111,7 @@ export default function LichSuKhamPage() {
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('vi-VN');
+    return d.toLocaleDateString("vi-VN");
   };
 
   return (
@@ -130,13 +141,27 @@ export default function LichSuKhamPage() {
                       <strong>Ngày khám:</strong> {formatDate(item.ngay_kham)}
                     </p>
                     <p>
-                      <strong>Trạng thái:</strong> {formatTrangThai(item.trang_thai)}
+                      <strong>Trạng thái:</strong>{" "}
+                      <span
+                        className={`px-2 py-1 rounded-md text-sm font-medium
+      ${
+        item.trang_thai === "dang_kham"
+          ? "text-blue-600 bg-blue-100"
+          : item.trang_thai === "hoan_thanh"
+          ? "text-green-600 bg-green-100"
+          : "text-red-600 bg-red-100"
+      }
+    `}
+                      >
+                        {formatTrangThai(item.trang_thai)}
+                      </span>
+                    </p>
+
+                    <p>
+                      <strong>Ghi chú:</strong> {item.ghi_chu || "Không có"}
                     </p>
                     <p>
-                      <strong>Ghi chú:</strong> {item.ghi_chu || 'Không có'}
-                    </p>
-                    <p>
-                      <strong>Quy trình:</strong>{' '}
+                      <strong>Quy trình:</strong>{" "}
                       {quyTrinhMap[item._id] ? (
                         <Link
                           href={`/quytrinh/${quyTrinhMap[item._id]!._id}`}
@@ -144,7 +169,7 @@ export default function LichSuKhamPage() {
                         >
                           Xem quy trình
                           <ArrowRight className="ml-1 h-4 w-4" />
-                      </Link>
+                        </Link>
                       ) : (
                         <span className="text-gray-400 italic">Chưa có</span>
                       )}

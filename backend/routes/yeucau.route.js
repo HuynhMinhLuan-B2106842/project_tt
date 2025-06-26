@@ -6,7 +6,8 @@ const {
     layChiTietYeuCau,
     duyetYeuCau,
     huyYeuCau,
-    timKiemYeuCau
+    timKiemYeuCau,
+    layYeuCauCuaBenhNhanDangNhap
 } = require("../controllers/yeucau.controller");
 
 const auth = require('../middleware/auth');
@@ -23,6 +24,30 @@ router.post('/', auth, guiYeuCauKham);
  *         description: Danh sách yêu cầu khám
  */
 router.get("/", layDanhSachYeuCau);
+
+/**
+ * @swagger
+ * /api/yeucau/benhnhan/me:
+ *   get:
+ *     summary: Bệnh nhân xem các yêu cầu khám của chính mình
+ *     tags: [YeuCau]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Danh sách yêu cầu khám của bệnh nhân
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/YeuCau'
+ *       401:
+ *         description: Không có token hoặc token không hợp lệ
+ *       500:
+ *         description: Lỗi máy chủ
+ */
+router.get('/benhnhan/me', auth, layYeuCauCuaBenhNhanDangNhap);
 
 /**
  * @swagger
