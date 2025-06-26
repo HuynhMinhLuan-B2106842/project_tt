@@ -14,7 +14,7 @@ exports.layTatCaQuyTrinh = async (req, res) => {
         populate: {
           path: "maBenhNhan",
           model: "Benhnhan",
-          select: "ho_ten _id",
+          select: "ho_ten _id dien_thoai",
         },
       })
       .populate("cacBuoc")
@@ -53,7 +53,7 @@ exports.layQuyTrinhTheoId = async (req, res) => {
         populate: {
           path: "maBenhNhan",
           model: "Benhnhan",
-          select: "ho_ten _id",
+          select: "ho_ten _id dien_thoai",
         },
       })
       .populate("cacBuoc")
@@ -299,7 +299,7 @@ exports.capNhatQuyTrinh = async (req, res) => {
       )
       .populate({
         path: "lanKhamId",
-        populate: { path: "maBenhNhan", select: "ho_ten" }
+        populate: { path: "maBenhNhan", select: "ho_ten dien_thoai" }
       });
     res.json({
       message: "Cập nhật quy trình thành công",

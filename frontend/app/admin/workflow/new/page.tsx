@@ -126,7 +126,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   return (
     <div className="container mx-auto py-8">
       <div className="flex items-center mb-6">
-        <Link href="/admin/workflow">
+        <Link href="/admin?section=workflow">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Quay lại
