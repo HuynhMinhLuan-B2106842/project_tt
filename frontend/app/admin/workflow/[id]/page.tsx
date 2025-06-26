@@ -16,9 +16,7 @@ const stepStatuses = [
   { value: "bo_qua", label: "Bỏ qua" },
 ];
 
-
 export default function WorkflowDetail() {
-  
   const params = useParams();
   const router = useRouter();
   const [quyTrinh, setQuyTrinh] = useState<any>(null);
@@ -28,6 +26,7 @@ export default function WorkflowDetail() {
   const maBenhNhan = quyTrinh?.maBenhNhan;
   const tenBenhNhan = quyTrinh?.tenBenhNhan;
   const benhNhan = quyTrinh?.lanKhamId?.maBenhNhan;
+
   useEffect(() => {
     const layQuyTrinh = async () => {
       try {
@@ -155,6 +154,27 @@ export default function WorkflowDetail() {
     const buoc = quyTrinh.cacBuoc.find((b: any) => b.maBuoc === maBuoc);
     if (!buoc) return;
 
+    // Rule 1: Block updates if the current status is "cho_xu_ly"
+    if (buoc.trangThai === "cho_xu_ly") {
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái từ 'Chờ xử lý'.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Rule 2: Allow updates to "hoan_thanh" or "bo_qua" only if the current status is "dang_xu_ly"
+    if (buoc.trangThai === "d Scoot! You should not attempt to change the status of a step that is in 'Pending' state.") {
+      toast({
+        title: "Lỗi",
+        description: "Chỉ có thể cập nhật trạng thái 'Đang xử lý' sang 'Hoàn thành' hoặc 'Bỏ qua'.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Proceed with the update if validation passes
     const buocCapNhat = {
       maBuoc: buoc.maBuoc,
       tenBuoc: buoc.tenBuoc,
@@ -171,7 +191,8 @@ export default function WorkflowDetail() {
     const viTriHienTai = cacBuocCapNhat.findIndex((b: any) => b.maBuoc === maBuoc);
     let newBuocHienTai = quyTrinh.buocHienTai;
 
-    if (trangThaiMoi === "hoan_thanh" && viTriHienTai < cacBuocCapNhat.length - 1) {
+    // Update next step to "dang_xu_ly" if current step is set to "hoan_thanh" or "bo_qua"
+    if (["hoan_thanh", "bo_qua"].includes(trangThaiMoi) && viTriHienTai < cacBuocCapNhat.length - 1) {
       const buocKeTiep = { ...cacBuocCapNhat[viTriHienTai + 1], trangThai: "dang_xu_ly" };
       cacBuocCapNhat[viTriHienTai + 1] = buocKeTiep;
       newBuocHienTai = cacBuocCapNhat[viTriHienTai + 1].maBuoc;
@@ -197,12 +218,18 @@ export default function WorkflowDetail() {
       highlightCurrentStep();
       toast({
         title: "Cập nhật trạng thái",
-        description: `Đã cập nhật bước "${buoc.tenBuoc}" sang trạng thái "${stepStatuses.find((s) => s.value === trangThaiMoi)?.label}"${
-          viTriHienTai < cacBuocCapNhat.length - 1 ? ` - Bước kế tiếp "${cacBuocCapNhat[viTriHienTai + 1].tenBuoc}" đã được kích hoạt` : ""
-        }`,
+        description: `Đã cập nhật bước "${buoc.tenBuoc}" sang trạng thái "${stepStatuses.find((s) => s.value === trangThaiMoi)?.label}"${viTriHienTai < cacBuocCapNhat.length - 1 && ["hoan_thanh", "bo_qua"].includes(trangThaiMoi)
+            ? ` - Bước kế tiếp "${cacBuocCapNhat[viTriHienTai + 1].tenBuoc}" đã được kích hoạt`
+            : ""
+          }`,
       });
     } catch (err) {
       console.error("Lỗi khi cập nhật trạng thái buoc:", err);
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái",
+        variant: "destructive",
+      });
     }
   };
 
@@ -262,10 +289,13 @@ export default function WorkflowDetail() {
 
   if (loading) return <div>Đang tải...</div>;
 
+  // Find the step with "dang_xu_ly" status to display as the current step
+  const currentStep = quyTrinh.cacBuoc.find((b: any) => b.trangThai === "dang_xu_ly");
+
   return (
     <div className="container mx-auto py-8">
       <div className="flex items-center mb-6">
-        <Link href="/admin/workflow">
+        <Link href="/admin?section=workflow">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Quay lại
@@ -292,7 +322,7 @@ export default function WorkflowDetail() {
                   <div>
                     <p className="text-sm font-medium">Bệnh nhân</p>
                     <p className="text-sm text-gray-600">
-                      {benhNhan?.ho_ten} 
+                      {benhNhan?.ho_ten}
                     </p>
                     <p className="text-sm text-gray-600">
                       ({benhNhan?._id})
@@ -319,9 +349,7 @@ export default function WorkflowDetail() {
                   <div>
                     <p className="text-sm font-medium">Bước hiện tại</p>
                     <p className="text-sm text-gray-600">
-                      {quyTrinh.buocHienTai === "completed"
-                        ? "Hoàn thành"
-                        : quyTrinh.cacBuoc.find((b: any) => b.maBuoc === quyTrinh.buocHienTai)?.tenBuoc || ""}
+                      {currentStep ? currentStep.tenBuoc : "Hoàn thành"}
                     </p>
                   </div>
                 </div>
