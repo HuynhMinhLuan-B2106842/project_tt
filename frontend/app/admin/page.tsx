@@ -6,7 +6,7 @@ import YeuCau from './views/YeuCau'
 import LanKham from './views/LanKham'
 import TaiKhoan from './views/TaiKhoan'
 import BenhNhan from './views/BenhNhan'
-
+import WorkFlow from './workflow/page'
 export default function AdminPage() {
   const section = useSearchParams().get('section')
 
@@ -20,6 +20,8 @@ export default function AdminPage() {
         return <TaiKhoan />
       case 'benhnhan':
         return <BenhNhan />
+      case 'workflow':
+        return <WorkFlow />
       default:
         return <p>Chọn một mục ở menu bên trái để bắt đầu.</p>
     }
