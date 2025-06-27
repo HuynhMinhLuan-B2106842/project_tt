@@ -37,20 +37,24 @@ const layDanhSachYeuCau = async (req, res) => {
     }
 };
 
-const layYeuCauCuaBenhNhanDangNhap = async (req, res) => {
+const layYeuCauCuaToi = async (req, res) => {
   try {
-    const taiKhoanId = new mongoose.Types.ObjectId(req.user.id); // 🟢 ép kiểu rõ ràng
+    const taiKhoanId = req.user.id;
 
-    const benhnhan = await Benhnhan.findOne({ tai_khoan_id: taiKhoanId });
-    if (!benhnhan) {
-      return res.status(404).json({ message: 'Không tìm thấy hồ sơ bệnh nhân của người dùng này' });
+    // Tìm bệnh nhân theo tài khoản
+    const benhNhan = await Benhnhan.findOne({ tai_khoan_id: taiKhoanId });
+
+    if (!benhNhan) {
+      return res.status(404).json({ message: "Không tìm thấy bệnh nhân tương ứng với tài khoản." });
     }
 
-    const danhSachYeuCau = await Yeucau.find({ ma_BN: benhnhan._id }).populate('ma_BN');
-    res.status(200).json(danhSachYeuCau);
+    // Tìm danh sách yêu cầu của bệnh nhân
+    const danhSachYeuCau = await Yeucau.find({ ma_BN: benhNhan._id }).sort({ ngay_muon_kham: -1 });
+
+    return res.json(danhSachYeuCau);
   } catch (error) {
-    console.error("🔥 Lỗi khi truy vấn yêu cầu khám:", error.message);
-    res.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+    console.error("❌ Lỗi tại layYeuCauCuaToi:", error);
+    return res.status(500).json({ message: "Đã xảy ra lỗi server.", error: error.message });
   }
 };
 
@@ -164,5 +168,5 @@ module.exports = {
     duyetYeuCau,
     huyYeuCau,
     timKiemYeuCau,
-    layYeuCauCuaBenhNhanDangNhap,
+    layYeuCauCuaToi,
 };
