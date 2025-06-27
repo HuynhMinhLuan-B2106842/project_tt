@@ -3,6 +3,7 @@ const Benhnhan = require("../models/benhnhan.model");
 const LanKham = require("../models/lankham.model");
 const QuyTrinh = require("../models/QuyTrinh");
 const Buoc = require("../models/Buoc");
+const mongoose = require('mongoose');
 const guiYeuCauKham = async (req, res) => {
     try {
         const taiKhoanId = req.user.id;
@@ -35,6 +36,28 @@ const layDanhSachYeuCau = async (req, res) => {
         res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
     }
 };
+
+const layYeuCauCuaToi = async (req, res) => {
+  try {
+    const taiKhoanId = req.user.id;
+
+    // Tìm bệnh nhân theo tài khoản
+    const benhNhan = await Benhnhan.findOne({ tai_khoan_id: taiKhoanId });
+
+    if (!benhNhan) {
+      return res.status(404).json({ message: "Không tìm thấy bệnh nhân tương ứng với tài khoản." });
+    }
+
+    // Tìm danh sách yêu cầu của bệnh nhân
+    const danhSachYeuCau = await Yeucau.find({ ma_BN: benhNhan._id }).sort({ ngay_muon_kham: -1 });
+
+    return res.json(danhSachYeuCau);
+  } catch (error) {
+    console.error("❌ Lỗi tại layYeuCauCuaToi:", error);
+    return res.status(500).json({ message: "Đã xảy ra lỗi server.", error: error.message });
+  }
+};
+
 
 const layChiTietYeuCau = async (req, res) => {
     try {
@@ -145,4 +168,5 @@ module.exports = {
     duyetYeuCau,
     huyYeuCau,
     timKiemYeuCau,
+    layYeuCauCuaToi,
 };

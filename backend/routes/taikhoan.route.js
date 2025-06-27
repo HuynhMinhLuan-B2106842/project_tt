@@ -91,10 +91,10 @@ router.post("/register", dangKy);
  *             properties:
  *               ten_dang_nhap:
  *                 type: string
+ *                 default: vcl@gmail.com
  *               mat_khau:
  *                 type: string
- *               repassword:
- *                 type: string
+ *                 default: 123456
  *     responses:
  *       200:
  *         description: Đăng nhập thành công
