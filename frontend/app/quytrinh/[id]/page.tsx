@@ -46,33 +46,33 @@ export default function XemQuyTrinhPage() {
                 ) : (
                     <div className="space-y-10">
                         {/* Thông tin chung */}
-                                <Card className="shadow-md">
-                                    <CardHeader>
-                                        <CardTitle className="text-blue-800">Thông tin chung</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-2">
-                        <div className="grid md:grid-cols-3 gap-6 text-center">
-                            <div>
-                                <p className="font-semibold text-gray-700">Tên quy trình</p>
-                                <p className="text-lg">{quyTrinh.ten}</p>
-                            </div>
-                            <div>
-                                <p className="font-semibold text-gray-700">Ngày bắt đầu</p>
-                                <p className="text-lg">{formatDateTime(quyTrinh.ngayBatDau)}</p>
-                            </div>
-                            <div>
-                                <p className="font-semibold text-gray-700">Trạng thái</p>
-                                <p className="text-lg">
-                                    {quyTrinh.trangThai === "hoan_thanh"
-                                        ? "Hoàn thành"
-                                        : quyTrinh.trangThai === "dang_xu_ly"
-                                            ? "Đang xử lý"
-                                            : "Chờ xử lý"}
-                                </p>
-                            </div>
-                        </div>
-                                    </CardContent>
-                                </Card>
+                        <Card className="shadow-md">
+                            <CardHeader>
+                                <CardTitle className="text-blue-800">Thông tin chung</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                                <div className="grid md:grid-cols-3 gap-6 text-center">
+                                    <div>
+                                        <p className="font-semibold text-gray-700">Tên quy trình</p>
+                                        <p className="text-lg">{quyTrinh.ten}</p>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-gray-700">Ngày bắt đầu</p>
+                                                <p className="text-lg"> {new Date(quyTrinh.lanKhamId?.ngay_kham).toLocaleDateString("vi-VN")}</p>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-gray-700">Trạng thái</p>
+                                        <p className="text-lg">
+                                            {quyTrinh.trangThai === "hoan_thanh"
+                                                ? "Hoàn thành"
+                                                : quyTrinh.trangThai === "dang_xu_ly"
+                                                    ? "Đang xử lý"
+                                                    : "Chờ xử lý"}
+                                        </p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
 
                         {/* Các bước nằm ngang */}
                         <div className="overflow-x-auto">
@@ -93,10 +93,10 @@ export default function XemQuyTrinhPage() {
                                             )}
                                             <div
                                                 className={`z-10 flex items-center justify-center w-12 h-12 rounded-full text-white font-bold text-lg ${isDone
-                                                        ? "bg-green-500"
-                                                        : isCurrent
-                                                            ? "bg-orange-500"
-                                                            : "bg-gray-400"
+                                                    ? "bg-green-500"
+                                                    : isCurrent
+                                                        ? "bg-orange-500"
+                                                        : "bg-gray-400"
                                                     }`}
                                             >
                                                 {index + 1}

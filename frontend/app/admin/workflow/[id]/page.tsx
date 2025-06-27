@@ -334,13 +334,7 @@ export default function WorkflowDetail() {
                   <div>
                     <p className="text-sm font-medium">Ngày bắt đầu</p>
                     <p className="text-sm text-gray-600">
-                      {new Date(quyTrinh.ngayBatDau).toLocaleDateString("vi-VN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {new Date(quyTrinh.lanKhamId?.ngay_kham).toLocaleDateString("vi-VN")}
                     </p>
                   </div>
                 </div>

@@ -31,6 +31,7 @@ interface BenhNhan {
 interface LanKham {
   _id: string;
   maBenhNhan: BenhNhan;
+  ngay_kham: string;
 }
 
 interface Diagram {
@@ -235,7 +236,7 @@ export default function WorkflowManagement() {
                     <Clock className="h-5 w-5 text-gray-500 mb-1" />
                     <p className="text-sm font-medium">Ngày bắt đầu</p>
                     <p className="text-sm text-gray-600">
-                      {new Date(quyTrinh.ngayBatDau).toLocaleString("vi-VN")}
+                      {new Date(quyTrinh.lanKhamId?.ngay_kham).toLocaleDateString("vi-VN")}
                     </p>
                   </div>
                   <div>

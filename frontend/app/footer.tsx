@@ -2,7 +2,7 @@ import { Stethoscope } from "lucide-react"
 
 export default function Footer() {
     return (
-        <footer className="bg-blue-900 text-white py-12 mt-8">
+        <footer className="bg-blue-900 text-white py-12">
             <div className="container mx-auto px-4">
                 <div className="grid md:grid-cols-4 gap-8">
                     <div>

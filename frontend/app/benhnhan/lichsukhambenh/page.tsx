@@ -122,7 +122,7 @@ export default function LichSuKhamPage() {
       <Header />
       <main className="min-h-[80vh] bg-gradient-to-b from-blue-50 to-white py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl font-bold text-blue-900 mb-6 text-center">
+          <h1 className="text-3xl font-bold text-center text-blue-900 mt-2 mb-8">
             Danh sách yêu cầu khám bệnh
           </h1>
 
@@ -132,15 +132,14 @@ export default function LichSuKhamPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-md border ${
-                  activeTab === tab
+                className={`px-4 py-2 rounded-md border ${activeTab === tab
                     ? tab === "cho_duyet"
                       ? "text-yellow-600 bg-yellow-100 font-bold"
                       : tab === "da_duyet"
-                      ? "text-green-600 bg-green-100 font-bold"
-                      : "text-red-600 bg-red-100 font-bold"
+                        ? "text-green-600 bg-green-100 font-bold"
+                        : "text-red-600 bg-red-100 font-bold"
                     : "text-gray-600 bg-gray-100"
-                }`}
+                  }`}
               >
                 {tab === "cho_duyet" && "Chờ duyệt"}
                 {tab === "da_duyet" && "Đã duyệt"}
@@ -162,13 +161,12 @@ export default function LichSuKhamPage() {
                     <Card key={yc._id} className="shadow-md">
                       <CardHeader>
                         <CardTitle
-                          className={`${
-                            activeTab === "cho_duyet"
+                          className={`${activeTab === "cho_duyet"
                               ? "text-yellow-700"
                               : activeTab === "da_duyet"
-                              ? "text-green-800"
-                              : "text-red-700"
-                          }`}
+                                ? "text-green-800"
+                                : "text-red-700"
+                            }`}
                         >
                           {yc.chuyen_khoa}
                         </CardTitle>
@@ -179,13 +177,12 @@ export default function LichSuKhamPage() {
                         <p>
                           <strong>Trạng thái:</strong>{" "}
                           <span
-                            className={`px-2 py-1 rounded-md text-sm font-medium ${
-                              activeTab === "cho_duyet"
+                            className={`px-2 py-1 rounded-md text-sm font-medium ${activeTab === "cho_duyet"
                                 ? "text-yellow-600 bg-yellow-100"
                                 : activeTab === "da_duyet"
-                                ? "text-green-600 bg-green-100"
-                                : "text-red-600 bg-red-100"
-                            }`}
+                                  ? "text-green-600 bg-green-100"
+                                  : "text-red-600 bg-red-100"
+                              }`}
                           >
                             {formatTrangThaiYC(yc.trang_thai_YC)}
                           </span>
@@ -218,15 +215,14 @@ export default function LichSuKhamPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTabLichSu(tab)}
-                className={`px-4 py-2 rounded-md border ${
-                  activeTabLichSu === tab
+                className={`px-4 py-2 rounded-md border ${activeTabLichSu === tab
                     ? tab === "dang_kham"
                       ? "text-blue-600 bg-blue-100 font-bold"
                       : tab === "hoan_thanh"
-                      ? "text-green-600 bg-green-100 font-bold"
-                      : "text-red-600 bg-red-100 font-bold"
+                        ? "text-green-600 bg-green-100 font-bold"
+                        : "text-red-600 bg-red-100 font-bold"
                     : "text-gray-600 bg-gray-100"
-                }`}
+                  }`}
               >
                 {tab === "dang_kham" && "Đang khám"}
                 {tab === "hoan_thanh" && "Hoàn thành"}
@@ -256,13 +252,12 @@ export default function LichSuKhamPage() {
                         <p>
                           <strong>Trạng thái:</strong>{" "}
                           <span
-                            className={`px-2 py-1 rounded-md text-sm font-medium ${
-                              item.trang_thai === "dang_kham"
+                            className={`px-2 py-1 rounded-md text-sm font-medium ${item.trang_thai === "dang_kham"
                                 ? "text-blue-600 bg-blue-100"
                                 : item.trang_thai === "hoan_thanh"
-                                ? "text-green-600 bg-green-100"
-                                : "text-red-600 bg-red-100"
-                            }`}
+                                  ? "text-green-600 bg-green-100"
+                                  : "text-red-600 bg-red-100"
+                              }`}
                           >
                             {formatTrangThai(item.trang_thai)}
                           </span>
