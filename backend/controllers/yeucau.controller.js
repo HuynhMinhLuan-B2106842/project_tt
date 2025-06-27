@@ -70,7 +70,7 @@ const duyetYeuCau = async (req, res) => {
     // 1. Tạo lần khám
     const lanKhamMoi = await LanKham.create({
       maBenhNhan: maBN,
-      ngay_kham: new Date(),
+        ngay_kham: yeuCau.ngay_muon_kham,
       trang_thai: 'dang_kham',
         ghi_chu: `${yeuCau.chuyen_khoa} - ${yeuCau.trieu_chung}`
     });

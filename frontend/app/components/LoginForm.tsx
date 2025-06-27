@@ -5,6 +5,8 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
 import { useAuth } from '../components/AuthContext';
+import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
 
 interface LoginPageProps {
   onSwitchToRegister: () => void;
@@ -20,25 +22,60 @@ export default function LoginPage({ onSwitchToRegister, onSuccess }: LoginPagePr
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const router = useRouter();
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+  //   setError('');
+
+  //   try {
+  //     const result = await login(username, password);
+  //     if (result.success) {
+  //       onSuccess();
+  //     } else {
+  //       setError(result.message || '');
+  //     }
+  //   } catch {
+  //     setError('Đã xảy ra lỗi. Vui lòng thử lại.');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-
+  
     try {
       const result = await login(username, password);
       if (result.success) {
+        // ✅ Lấy token và giải mã
+        const token = localStorage.getItem('token');
+        if (token) {
+          const decoded = jwtDecode<{ id: string; vai_tro: string }>(token);
+          const role = decoded.vai_tro;
+  
+          if (role === 'admin') {
+            router.push('/admin');
+          } else {
+            router.push('/');
+          }
+        } else {
+          setError('Không tìm thấy token.');
+        }
         onSuccess();
       } else {
         setError(result.message || '');
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError('Đã xảy ra lỗi. Vui lòng thử lại.');
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="w-full max-w-md p-10">
       <h2 className="text-3xl font-bold text-center text-blue-600 mb-2">Đăng nhập</h2>

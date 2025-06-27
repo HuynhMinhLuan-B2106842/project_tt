@@ -112,7 +112,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       title: "Cập nhật thành công",
       description: "Đã gán sơ đồ vào quy trình",
     });
-    router.push("/admin/workflow");
+    router.push("/admin?section=workflow");
   } catch (err: any) {
     toast({
       title: "Lỗi",
