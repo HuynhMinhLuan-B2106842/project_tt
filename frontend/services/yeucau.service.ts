@@ -19,3 +19,13 @@ export const tuChoiYeuCau = async (id: string) => {
     const res = await api.delete(`/yeucau/huy/${id}`);
     return res.data;
 };
+
+export const layYeuCauBenhNhanMe = async () => {
+  const token = localStorage.getItem("token");
+  const res = await api.get('/yeucau/me', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};

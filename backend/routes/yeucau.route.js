@@ -6,10 +6,11 @@ const {
     layChiTietYeuCau,
     duyetYeuCau,
     huyYeuCau,
-    timKiemYeuCau
+    timKiemYeuCau,
+    layYeuCauCuaToi,
 } = require("../controllers/yeucau.controller");
-
 const auth = require('../middleware/auth');
+
 router.post('/', auth, guiYeuCauKham);
 
 /**
@@ -23,6 +24,20 @@ router.post('/', auth, guiYeuCauKham);
  *         description: Danh sách yêu cầu khám
  */
 router.get("/", layDanhSachYeuCau);
+
+/**
+ * @swagger
+ * /api/yeucau/benhnhan/me:
+ *   get:
+ *     summary: Lấy danh sách yêu cầu lần khám của bệnh nhân đang đăng nhập
+ *     tags: [YeuCau]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.get("/benhnhan/me", auth, layYeuCauCuaToi);
 
 /**
  * @swagger

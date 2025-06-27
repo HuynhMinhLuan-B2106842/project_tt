@@ -5,7 +5,8 @@ const YeucauSchema = new mongoose.Schema({
   ngay_muon_kham: Date,
   chuyen_khoa: String,
   trieu_chung: String,
-  trang_thai_YC: { type: String, enum: ['cho_duyet', 'da_duyet', 'tu_choi'], default: 'cho_duyet' }
+  trang_thai_YC: { type: String, enum: ['cho_duyet', 'da_duyet', 'tu_choi'], default: 'cho_duyet' },
+  ly_do: String,
 });
 
 module.exports = mongoose.model('Yeucau', YeucauSchema);
