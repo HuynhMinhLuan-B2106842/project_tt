@@ -115,7 +115,7 @@ export default function Home() {
 
             <div className="mt-10 text-center">
               <Button asChild>
-                <Link href="/quy-trinh" className="flex items-center gap-2">
+                <Link href="/quytrinh" className="flex items-center gap-2">
                   Xem chi tiết quy trình <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -184,7 +184,7 @@ export default function Home() {
             <div>
               <h4 className="font-bold mb-4">Liên hệ</h4>
               <ul className="space-y-2 text-blue-200">
-                <li>123 Đường Khám Bệnh, Quận Y Tế</li>
+                <li>11 Phan Đình Phùng, phường Ninh Kiều,Tp. Cần Thơ</li>
                 <li>Email: info@phongkhamdakhoa.vn</li>
                 <li>Điện thoại: 0123 456 789</li>
               </ul>

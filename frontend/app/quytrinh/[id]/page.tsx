@@ -96,8 +96,7 @@ export default function XemQuyTrinhPage() {
                                                     ? "bg-green-500"
                                                     : isCurrent
                                                         ? "bg-orange-500"
-                                                        : "bg-gray-400"
-                                                    }`}
+                                                        : "bg-gray-400"                                                    }`}
                                             >
                                                 {index + 1}
                                             </div>

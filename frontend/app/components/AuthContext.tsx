@@ -34,10 +34,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  // const logout = () => {
+  //   setToken(null)
+  //   localStorage.removeItem('token')
+  // }
+
   const logout = () => {
-    setToken(null)
-    localStorage.removeItem('token')
-  }
+  setToken(null);
+  localStorage.removeItem('token');
+  // Xóa session chat của Botpress
+  sessionStorage.removeItem('bp-webchat-5a639656-77ae-46ba-b615-18dea036fefd');
+  // Tự động reload trang
+  window.location.reload();
+};
 
   return (
     <AuthContext.Provider value={{ token, login, logout }}>
