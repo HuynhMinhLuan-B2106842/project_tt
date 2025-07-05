@@ -20,7 +20,6 @@ import {
   Stethoscope,
   Users,
 } from "lucide-react";
-import Image from "next/image";
 import { Button } from "../components/ui/button";
 import ProcessDiagram from "../components/ProcessDiagram";
 import Header from "../components/Header";
@@ -43,7 +42,7 @@ export default function ProcessPage() {
           </p>
 
           <Tabs defaultValue="overview" className="mb-12">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 ">
               <TabsTrigger value="overview">Tổng quan</TabsTrigger>
               <TabsTrigger value="diagram">Sơ đồ quy trình</TabsTrigger>
               <TabsTrigger value="steps">Các bước chi tiết</TabsTrigger>
@@ -90,11 +89,10 @@ export default function ProcessPage() {
                   </div>
                 </div>
                 <div className="relative h-[300px] md:h-auto">
-                  <Image
-                    src="/placeholder.svg?height=400&width=600"
+                  <img
+                    src="https://i.pinimg.com/1200x/8f/58/ef/8f58ef2f691fdbcd11151fe40ae16048.jpg"
                     alt="Quy trình khám bệnh"
-                    fill
-                    className="object-cover rounded-lg shadow-md"
+                    className="w-full h-full object-cover rounded-lg shadow-md"
                   />
                 </div>
               </div>
@@ -292,7 +290,7 @@ export default function ProcessPage() {
                 size="lg"
                 className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
               >
-                <Link href="/dat-lich">Đặt lịch trực tuyến</Link>
+                <Link href="/benhnhan/yeucau">Đặt lịch trực tuyến</Link>
               </Button>
               <Button size="lg" variant="outline">
                 Gọi 0123 456 789

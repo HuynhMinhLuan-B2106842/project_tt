@@ -1,20 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Button } from '../components/ui/button';
-import { Stethoscope, User, Menu, X } from 'lucide-react';
-import { useAuth } from '../components/AuthContext';
-import AuthModal from '../components/AuthModal';
-import { getUserIdFromToken } from '@/utils/token';
-import { layThongTinTaiKhoan, TaiKhoan } from '@/services/taikhoan.service';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Button } from "../components/ui/button";
+import { Stethoscope, User, Menu, X } from "lucide-react";
+import { useAuth } from "../components/AuthContext";
+import AuthModal from "../components/AuthModal";
+import { getUserIdFromToken } from "@/utils/token";
+import { layThongTinTaiKhoan, TaiKhoan } from "@/services/taikhoan.service";
 
 export default function Header() {
   const { token, logout } = useAuth();
   const isAuthenticated = !!token;
   const [user, setUser] = useState<TaiKhoan | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('register');
+  const [authModalTab, setAuthModalTab] = useState<"login" | "register">(
+    "register"
+  );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -25,12 +27,12 @@ export default function Header() {
   }, [token]);
 
   const handleLoginClick = () => {
-    setAuthModalTab('login');
+    setAuthModalTab("login");
     setIsAuthModalOpen(true);
   };
 
   const handleRegisterClick = () => {
-    setAuthModalTab('register');
+    setAuthModalTab("register");
     setIsAuthModalOpen(true);
   };
 
@@ -39,15 +41,14 @@ export default function Header() {
   };
 
   const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value === 'logout') {
+    if (e.target.value === "logout") {
       logout();
-    } else if (e.target.value === 'admin') {
-      window.location.href = '/admin';
-    } else if (e.target.value === 'profile') {
-      window.location.href = '/benhnhan/xemhoso';
-    }
-    else if (e.target.value === 'doimk') {
-      window.location.href = '/benhnhan/doimatkhau';
+    } else if (e.target.value === "admin") {
+      window.location.href = "/admin";
+    } else if (e.target.value === "profile") {
+      window.location.href = "/benhnhan/xemhoso";
+    } else if (e.target.value === "doimk") {
+      window.location.href = "/benhnhan/doimatkhau";
     }
   };
 
@@ -106,7 +107,7 @@ export default function Header() {
 
         {/* Auth section */}
         <div className="hidden md:flex items-center gap-3">
-          {isAuthenticated && user ? (
+          {/* {isAuthenticated && user ? (
             <div className="flex items-center gap-6">
               <User className="w-5 h-5 text-blue-600" />
               <select
@@ -122,19 +123,39 @@ export default function Header() {
                 <option value="logout">Đăng xuất</option>
               </select>
             </div>
+          ) : ( */}
+          {isAuthenticated && user ? (
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => (window.location.href = "/benhnhan/xemhoso")}
+              >
+                <User className="w-5 h-5 text-blue-600 hover:text-blue-800 cursor-pointer" />
+              </button>
+              <select
+                onChange={handleDropdownChange}
+                className="text-blue-900 bg-white border border-gray-300 px-3 py-1 rounded"
+              >
+                <option value="">{user.ten_dang_nhap}</option>
+                {user.vai_tro === "admin" && (
+                  <option value="admin">Quản lý</option>
+                )}
+                <option value="doimk">Đổi mật khẩu</option>
+                <option value="logout">Đăng xuất</option>
+              </select>
+            </div>
           ) : (
             <>
               <Button
                 variant="outline"
                 onClick={handleLoginClick}
-                className="hover:bg-blue-100 hover:text-blue-700 transition"
+                className="hover:bg-blue-100 hover:text-blue-700 transition cursor-pointer"
               >
                 Đăng nhập
               </Button>
 
               <Button
                 onClick={handleRegisterClick}
-                className="hover:bg-blue-600 hover:text-white transition"
+                className="hover:bg-blue-600 hover:text-white transition cursor-pointer"
               >
                 Đăng ký
               </Button>
@@ -155,7 +176,7 @@ export default function Header() {
               Trang chủ
             </Link>
             <Link
-              href="/quy-trinh"
+              href="/quytrinh"
               onClick={() => setIsMobileMenuOpen(false)}
               className="py-2 border-b text-blue-900"
             >
